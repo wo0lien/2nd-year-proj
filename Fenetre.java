@@ -1,10 +1,12 @@
+import java.awt.Color;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
  * Fenetre
  */
-public class Fenetre extends JFrame{
+public class Fenetre extends JFrame {
 
     //variables
 
@@ -16,11 +18,12 @@ public class Fenetre extends JFrame{
 
         this.setSize(800, 800);
 
-        world = new Terrain(100, 50, 600, 400); 
+        world = new Terrain(100, 50, 600, 400);
 
         //Jpanel principal (content pane)
         mainPanel = new JPanel();
         mainPanel.setLayout(null);
+        mainPanel.setBackground(Color.black);
         mainPanel.add(world);
         //ajout du panel à la fenetre principale
         this.setContentPane(mainPanel);
