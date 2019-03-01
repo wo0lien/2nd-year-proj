@@ -2,8 +2,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Graphics;
+import java.awt.Robot;
+import java.awt.AWTException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -16,7 +20,7 @@ import javax.swing.Timer;
 /**
  * Terrain
  */
-public class Terrain extends JPanel implements MouseMotionListener, MouseListener, ActionListener{
+public class Terrain extends JPanel implements ActionListener, MouseListener {
 
     //const
     private static final int GREYRATIO = 200;
@@ -26,31 +30,34 @@ public class Terrain extends JPanel implements MouseMotionListener, MouseListene
 
     //variable
 
-    private boolean b;
-
     private Mouton mout;
-
     private BufferedImage monBuf; // buffer d’affichage
-
     private Timer t;
+
 
     //gestion des déplacements de la map
 
     private int xOffset=0, yOffset=0, mouseX, mouseY;
+    private Robot rob;
+    public boolean echap;
 
-    public Terrain(int xPos,int yPos, int x, int y){
+    public Terrain(int xPos,int yPos, int x, int y) throws AWTException{
 	
         this.setLayout(null);
         this.setBounds(xPos, yPos, x, y);
 
         //ajout des Listeners
-        
-        this.addMouseMotionListener(this);
+
         this.addMouseListener(this);
 
         //timer
 
         t = new Timer(10, this);
+
+        //robot
+
+        rob = new Robot();
+        echap = true;
 
         // this.setBackground(Color.black);
         //utilisation de la librairie graphics pour les graphiques du plateau
@@ -93,33 +100,45 @@ public class Terrain extends JPanel implements MouseMotionListener, MouseListene
 
     }
 
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (b) {
-            xOffset += mouseX;
-            this.repaint();    
-        } else {
-            xOffset -= 600 - mouseX;
-            this.repaint();
-        }
+        //empty pour l'instant plus d'utilité au timer
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
 
-        //détermination de la face par laquelle la souris est sortie
-        if (mouseX < 20) {
-            b = true;
-            xOffset += mouseX;
-            System.out.println("repaint now");
-            t.start();
-            this.repaint();
-        } else if(mouseX > 580) {
-            b = false;
-            xOffset -= 600 - mouseX;
-            System.out.println("repaint now");
-            t.start();
-            this.repaint();
+        // Pour empecher la souris de sortir et déplacer le terrain sous la souris
+        if (!echap) {
+            // en x
+            if (e.getX() <= 0) {
+                xOffset += Math.abs((double) e.getX());
+                this.repaint();
+                mouseX = 1 + this.getLocationOnScreen().x;
+            } else if (e.getX() >= this.getWidth()) {
+                xOffset += this.getWidth() - Math.abs((double) e.getX());
+                this.repaint();
+                mouseX = this.getWidth() + this.getLocationOnScreen().x - 1;
+            } else {
+                mouseX = e.getX() + this.getLocationOnScreen().x;
+            }
+            // en y
+            if (e.getY() <= 0) {
+                yOffset += Math.abs((double) e.getY());
+                this.repaint();
+                mouseY = this.getLocationOnScreen().y + 1;
+            } else if (e.getY() >= this.getHeight()) {
+                yOffset += this.getHeight() - Math.abs((double) e.getY());
+                this.repaint();
+                mouseY = this.getLocationOnScreen().y + this.getHeight() - 1;
+            } else {
+                mouseY = this.getLocationOnScreen().y + e.getY();
+            }
+
+            //déplacement de la souris 
+
+            rob.mouseMove(mouseX, mouseY);
         }
     }
 
@@ -133,16 +152,7 @@ public class Terrain extends JPanel implements MouseMotionListener, MouseListene
     public void mouseReleased(MouseEvent e) {}
     @Override
     public void mouseEntered(MouseEvent e) {
-        t.stop();
-    }
-    @Override
-    public void mouseDragged(MouseEvent e){}
-
-    @Override
-    public void mouseMoved(MouseEvent e){
-        System.out.println(e.getX() +" : "+e.getY());
-        mouseX = e.getX();
-        mouseY = e.getY();
+        echap = false;
     }
 
 }
