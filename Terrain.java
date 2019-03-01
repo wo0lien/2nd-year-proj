@@ -1,22 +1,16 @@
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Robot;
-import java.awt.AWTException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
-import javax.security.auth.callback.NameCallback;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
 /**
  * Terrain
  */
@@ -105,7 +99,9 @@ public class Terrain extends JPanel implements ActionListener, MouseListener {
     public void actionPerformed(ActionEvent e) {
         //empty pour l'instant plus d'utilité au timer
     }
-
+    /** 
+     * Utilisation de mouseExited() pour déplacer la carte lorsque l'utilisateur tire un cote de la carte
+    */
     @Override
     public void mouseExited(MouseEvent e) {
 
@@ -136,7 +132,7 @@ public class Terrain extends JPanel implements ActionListener, MouseListener {
                 mouseY = this.getLocationOnScreen().y + e.getY();
             }
 
-            //déplacement de la souris 
+            //déplacement de la souris par le robot
 
             rob.mouseMove(mouseX, mouseY);
         }
