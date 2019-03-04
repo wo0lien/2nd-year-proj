@@ -7,18 +7,25 @@ import java.awt.Graphics;
 public abstract class ObjetCeleste {
 
     //
-    protected double masse;
+    protected double masse, vAng;
     protected int x, y;
-    protected Vecteur vitesse;
 
-    public ObjetCeleste(double m, double vx, double vy, int ax, int ay) {
+    public ObjetCeleste(double m, double v, int ax, int ay) {
         masse = m;
         x = ax;
         y = ay;
-        vitesse = new Vecteur(vx, vy);
+        vAng = v;
     }
 
     //déclatation des méthodes abstract
 
-    public abstract void paint(Graphics g);
+    public abstract void paint(Graphics g, double t);
+
+    public int GetX(){
+        return this.x;
+    }
+
+    public int GetY() {
+        return this.y;
+    }
 }

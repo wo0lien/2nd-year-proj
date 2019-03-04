@@ -17,7 +17,7 @@ public class Fenetre extends JFrame implements KeyListener{
     public Fenetre(String nom) throws AWTException{
         super(nom);
 
-        this.setSize(800, 800);
+        this.setSize(700, 700);
 
         //Jpanel principal (content pane)
         mainPanel = new JPanel();
