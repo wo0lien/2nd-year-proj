@@ -33,6 +33,8 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
     private BufferedImage monBuf; // buffer d’affichage
 
     private BufferedImage spaceStars;
+    private BufferedImage planetImage;
+    private BufferedImage resizedPlanet;
 
     public Space(int xPos, int yPos, int x, int y) {
 
@@ -49,13 +51,16 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
         // buffered image
         monBuf = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
 
-        // image du fond
+        // images
 
         try {
             spaceStars = ImageIO.read(getClass().getResourceAsStream("space_with_stars.png"));
+            planetImage = ImageIO.read(getClass().getResourceAsStream("earth.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // resizedPlanet = Scalr.resize(planetImage, Scalr.Method.BALANCED, newPlanetRadius * 2, newPlanetRadius * 2);
 
         // ajout des listeners
 
@@ -114,13 +119,13 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
             // affichage de la planete sur le curseur de l'utilisateur
             if (mouseIn) {
                 g.setColor(Color.green);
-                g.fillOval(mouseX - newPlanetRadius / 2, mouseY - newPlanetRadius / 2, newPlanetRadius, newPlanetRadius);
+                g.fillOval(mouseX - newPlanetRadius, mouseY - newPlanetRadius, newPlanetRadius * 2, newPlanetRadius * 2);
             }
         case 2:
             //position de la nouvelle planete fixee => fixage de la taille
             if (mouseIn) {
                 g.setColor(Color.green);
-                g.fillOval(newPlanetX - newPlanetRadius / 2, newPlanetY - newPlanetRadius / 2, newPlanetRadius, newPlanetRadius);
+                g.fillOval(newPlanetX - newPlanetRadius, newPlanetY - newPlanetRadius, newPlanetRadius * 2, newPlanetRadius * 2);
             }
             break;
         default:
