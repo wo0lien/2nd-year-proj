@@ -17,16 +17,15 @@ public class Fenetre extends JFrame implements KeyListener{
     public Fenetre(String nom) throws AWTException{
         super(nom);
 
-        this.setSize(700, 700);
+        this.setSize(1000, 700);
 
         //Jpanel principal (content pane)
         mainPanel = new JPanel();
         mainPanel.setLayout(null);
         mainPanel.setBackground(Color.black);
 
-        //attention il faudrait ici des valeurs en fonction de la taille de la fenetre et des insets()
-        space = new Space(50, 50, 700, 700);
-
+        //création du JPanel Space a la taille de la fenetre
+        space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right, this.getHeight() - this.getInsets().top - this.getInsets().bottom);
         mainPanel.add(space);
 
         //ajout du panel à la fenetre principale

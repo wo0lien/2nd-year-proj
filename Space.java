@@ -1,10 +1,10 @@
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 /**
@@ -16,15 +16,14 @@ public class Space extends JPanel implements ActionListener {
     private Soleil s;
     private Planete p;
 
-    //const
-    private static final int GREYRATIO = 200;
-    private static final Color backgroundColor = new Color(GREYRATIO, GREYRATIO, GREYRATIO);
-
+    //timer
     Timer t;
     private int dt = 40, temps = 0;
 
     //Image pour l'affichage sans scintillements
     private BufferedImage monBuf; // buffer d’affichage
+
+    private BufferedImage spaceStars;
 
     public Space(int xPos, int yPos, int x, int y) {
 
@@ -44,7 +43,18 @@ public class Space extends JPanel implements ActionListener {
         Dimension dim = getSize();
         //buffered image
         monBuf = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+
+        //image du fond
+
+        try {
+            spaceStars = ImageIO.read(getClass().getResourceAsStream("space_with_stars.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         repaint();
+
+
     }
 
     @Override
@@ -70,10 +80,11 @@ public class Space extends JPanel implements ActionListener {
      */
     public void Prepaint(Graphics g){   
 
-        //background painting (pas forcement très opti)
-        g.setColor(backgroundColor);    
-        g.fillRect(0, 0, this.getWidth(), this.getHeight() );
+        //draw background image
 
+        g.drawImage(spaceStars, 0, 0, null);
+
+        
         //paint objets
         s.paint(g, temps);
         p.paint(g, temps);
