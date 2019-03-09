@@ -1,13 +1,14 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 
 /**
  * Soleil
  */
 public class Soleil extends ObjetCeleste {
 
-    public Soleil(double m, int ax, int ay) {
-        super(m, 0, ax, ay); //un soleil est une étoile fixe avec vitesse = 0
+    public Soleil(double m, int ax, int ay, Image i) {
+        super(m, 0, ax, ay, i); //un soleil est une étoile fixe avec vitesse = 0
     }
 
     public void paint(Graphics g, double t){

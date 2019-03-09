@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -9,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -37,6 +37,10 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
     private BufferedImage spaceStars;
     private Image planetImage;
     private Image resizedPlanet;
+
+    //objects
+
+    private LinkedList<ObjetCeleste> objets; 
 
     public Space(int xPos, int yPos, int x, int y) {
 
@@ -70,7 +74,9 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
             e.printStackTrace();
         }
 
-        resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_DEFAULT);
+        resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
+
+        objets = new LinkedList<ObjetCeleste>();
 
         // ajout des listeners
 
@@ -118,6 +124,12 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
         // draw background image
 
         g.drawImage(spaceStars, 0, 0, null);
+
+        //affichage de la liste des objets
+
+        for (ObjetCeleste obj : objets) {
+            obj.paint(g, 1);
+        }
 
         // prise en compte du mode
 
@@ -168,7 +180,7 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
                 newPlanetRadius = (int)Math.sqrt(Math.pow(mouseX - newPlanetX, 2) + Math.pow(mouseY - newPlanetY, 2));
 
                 //mise a l'echelle de la planete
-                resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_DEFAULT);
+                resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
 
                 break;
             
@@ -195,6 +207,8 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
 
             case 2:
                 //sauvegarde de la planete dans la liste des objets
+                Planete newp = new Planete((double)2 * newPlanetRadius, 0, newPlanetX, newPlanetY, resizedPlanet);
+                objets.add(newp);
 
                 //repassage en mode 0 et réinitialisation
 
@@ -204,7 +218,7 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
                 newPlanetX = 0;
                 newPlanetY = 0;
 
-                resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_DEFAULT);
+                resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
             
                 default:
                 break;
