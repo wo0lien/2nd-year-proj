@@ -70,6 +70,8 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
             e.printStackTrace();
         }
 
+        resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_DEFAULT);
+
         // ajout des listeners
 
         this.addMouseListener(this);
@@ -126,17 +128,12 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
         case 1:
             // affichage de la planete sur le curseur de l'utilisateur
             if (mouseIn) {
-                g.setColor(Color.green);
-                //g.fillOval(mouseX - newPlanetRadius, mouseY - newPlanetRadius, newPlanetRadius * 2, newPlanetRadius * 2);
-
                 g.drawImage(resizedPlanet , mouseX - newPlanetRadius, mouseY - newPlanetRadius, null);
             }
+            break;
         case 2:
             //position de la nouvelle planete fixee => fixage de la taille
             if (mouseIn) {
-                g.setColor(Color.green);
-                // g.fillOval(newPlanetX - newPlanetRadius, newPlanetY - newPlanetRadius, newPlanetRadius * 2, newPlanetRadius * 2);
-
                 g.drawImage(resizedPlanet , newPlanetX - newPlanetRadius, newPlanetY - newPlanetRadius, null);
             }
             break;
@@ -171,7 +168,6 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
                 newPlanetRadius = (int)Math.sqrt(Math.pow(mouseX - newPlanetX, 2) + Math.pow(mouseY - newPlanetY, 2));
 
                 //mise a l'echelle de la planete
-
                 resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_DEFAULT);
 
                 break;
@@ -208,7 +204,9 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
                 newPlanetX = 0;
                 newPlanetY = 0;
 
-            default:
+                resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_DEFAULT);
+            
+                default:
                 break;
         }
     }
