@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -22,6 +23,7 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
     // timer
     Timer t;
     private int dt = 40, temps = 0;
+    private boolean pause;
 
     // variable de modes en fonction des actions de l'utilisateur mode 0 normal,
     // mode 1 nouvelle planete
@@ -50,6 +52,7 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
         this.setBounds(xPos, yPos, x, y);
 
         t = new Timer(dt, this);
+        pause = true;
         t.start();
 
         Dimension dim = getSize();
@@ -90,7 +93,15 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == t) {
-            temps += dt;
+
+            // si l'animation tourne on peut update la position des planetes
+
+            if (!pause) {
+                for (ObjetCeleste obj : objets) {
+                    obj.update(dt);
+                }     
+            }
+
             repaint();
         }
     }
@@ -100,7 +111,23 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
      */
     public void NewPlanet() {
         System.out.println("Passage en mode ajout de planete");
+
+        //reinitialisation des variables necessaires
+
+        newPlanetRadius = 20;
+        newPlanetX = 0;
+        newPlanetY = 0;
+        resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
+
         mode = 1;
+    }
+
+
+    public void TimerButton() {
+        
+        //changement d'etat de la variable pause
+        
+        pause = !pause;
     }
 
     /**
@@ -128,7 +155,7 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
         //affichage de la liste des objets
 
         for (ObjetCeleste obj : objets) {
-            obj.paint(g, 1);
+            obj.paint(g);
         }
 
         // prise en compte du mode
@@ -147,6 +174,12 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
             //position de la nouvelle planete fixee => fixage de la taille
             if (mouseIn) {
                 g.drawImage(resizedPlanet , newPlanetX - newPlanetRadius, newPlanetY - newPlanetRadius, null);
+            }
+            break;
+        case 3:
+            if (mouseIn) {
+                g.setColor(Color.red);
+                g.drawLine(newPlanetX, newPlanetY, mouseX, mouseY);
             }
             break;
         default:
@@ -199,28 +232,35 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
                 break;
             case 1:
                 //fixage de la position de la nouvelle planete
-                newPlanetX = mouseX;
-                newPlanetY = mouseY;
+                newPlanetX = e.getX();
+                newPlanetY = e.getY();
                 //passage au mode suivant
+                System.out.println("Passe au mode selection taille");
                 mode = 2;
                 break;
 
             case 2:
                 //sauvegarde de la planete dans la liste des objets
-                Planete newp = new Planete((double)2 * newPlanetRadius, 0, newPlanetX, newPlanetY, resizedPlanet);
+                Planete newp = new Planete((double)2 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet);
                 objets.add(newp);
 
-                //repassage en mode 0 et réinitialisation
+                //repassage en mode 3
+                System.out.println("Passage au mode selection vitesse");
+                mode = 3;
+                break;
+            case 3:
+
+                // on assigne a la planete la vitesse en x et en y en fonction de la position du curseur
+
+                objets.get(objets.size() - 1).setVitesseX((double)e.getX() - newPlanetX);
+                objets.get(objets.size() - 1).setVitesseY((double)e.getY() - newPlanetY);
+                
+                //retour au mode 0
 
                 mode = 0;
 
-                newPlanetRadius = 20;
-                newPlanetX = 0;
-                newPlanetY = 0;
-
-                resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
-            
-                default:
+                break;
+            default:
                 break;
         }
     }

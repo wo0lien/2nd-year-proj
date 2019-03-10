@@ -8,21 +8,24 @@ import java.awt.Image;
 public abstract class ObjetCeleste {
 
     //
-    protected double masse, vAng;
+    protected double masse, dx, dy;
     protected int x, y;
     protected Image disp;
 
-    public ObjetCeleste(double m, double v, int ax, int ay, Image i) {
+    public ObjetCeleste(double m, double vx, double vy, int ax, int ay, Image i) {
         masse = m;
         x = ax;
         y = ay;
-        vAng = v;
+        dx = vx;
+        dy = vy;
         disp = i;
     }
 
     //déclatation des méthodes abstract
 
-    public abstract void paint(Graphics g, double t);
+    public abstract void paint(Graphics g);
+
+    public abstract void update(int dt);
 
     public int GetX(){
         return this.x;
@@ -31,4 +34,7 @@ public abstract class ObjetCeleste {
     public int GetY() {
         return this.y;
     }
+
+    public abstract void setVitesseX(double vx);
+    public abstract void setVitesseY(double vy);
 }
