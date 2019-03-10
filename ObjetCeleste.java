@@ -11,6 +11,7 @@ public abstract class ObjetCeleste {
     protected double masse, dx, dy;
     protected int x, y;
     protected Image disp;
+    protected int temp;
 
     public ObjetCeleste(double m, double vx, double vy, int ax, int ay, Image i) {
         masse = m;
