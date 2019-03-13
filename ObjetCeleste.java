@@ -8,18 +8,18 @@ import java.util.LinkedList;
 public abstract class ObjetCeleste {
 
     //
-    protected double masse, dx, dy;
+    public double masse, vx, vy;
     protected int x, y;
     protected Image disp;
     protected int temp;
 
-    public ObjetCeleste(double m, double vx, double vy, int ax, int ay, Image i) {
+    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i) {
         masse = m;
         x = ax;
         y = ay;
-        dx = vx;
-        dy = vy;
         disp = i;
+        vx = vitx;
+        vy = vity;
 
         //bug : la linked list n'est pas dans le constructeur on ne peut pas y avoir acces depuis ici il faut faire en sort de créer la methode update dans space.java
         //pour avoir acces a tous les objets, voir aussi au niveau du foreach plus simple et propre pour parcourir une linked list
@@ -58,6 +58,10 @@ public abstract class ObjetCeleste {
 
     public int GetY() {
         return this.y;
+    }
+
+    public double GetMasse(){
+        return this.masse;
     }
 
     public abstract void setVitesseX(double vx);

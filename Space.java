@@ -97,8 +97,23 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
             // si l'animation tourne on peut update la position des planetes
 
             if (!pause) {
-                for (ObjetCeleste obj : objets) {
-                    obj.update(dt);
+                for (ObjetCeleste objet : objets) {
+                    double Force, angle, r;
+                    int dx, dy;
+                    for (ObjetCeleste obj : objets) {
+                        // int Distx;
+                        // int Disty;
+                        dx = obj.GetX() - objet.GetX();
+                        dy = obj.GetY() - objet.GetY();
+                        r = dx * dx + dy * dy;
+                        if (r != 0) {
+                            Force = obj.GetMasse() / r;
+                            angle = Math.atan2(dy, dx);
+                            objet.vx += Force * Math.cos(angle);
+                            objet.vy += Force * Math.sin(angle);
+                        }
+                    }
+                objet.update(dt);
                 }     
             }
 
@@ -241,7 +256,8 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
 
             case 2:
                 //sauvegarde de la planete dans la liste des objets
-                Planete newp = new Planete((double)2 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet);
+                //remplacer le 2 par un coef en fonction des materiaux
+                Planete newp = new Planete((double)10000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet);
                 objets.add(newp);
 
                 //repassage en mode 3

@@ -20,18 +20,18 @@ public class Planete extends ObjetCeleste{
     }
 
     @Override
-    public void setVitesseX(double vx) {
-        dx = vx;
+    public void setVitesseX(double vitx) {
+        vx = vitx;
     }
 
     @Override
-    public void setVitesseY(double vy) {
-        dy = vy;
+    public void setVitesseY(double vity) {
+        vy = vity;
     }
 
     @Override
     public void update(int dt) {
-        this.x += dt * dx / 1000;
-        this.y += dt * dy / 1000;
+        this.x += dt * vx / 1000;
+        this.y += dt * vy / 1000;
     }
 }

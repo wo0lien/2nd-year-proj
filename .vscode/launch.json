@@ -8,8 +8,7 @@
             "type": "java",
             "name": "CodeLens (Launch) - MainGame",
             "request": "launch",
-            "mainClass": "MainGame",
-            "projectName": "projet-2a_d55cc264"
+            "mainClass": "MainGame"
         },
         {
             "type": "java",
