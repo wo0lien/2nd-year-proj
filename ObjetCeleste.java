@@ -20,6 +20,10 @@ public abstract class ObjetCeleste {
         dx = vx;
         dy = vy;
         disp = i;
+
+        //bug : la linked list n'est pas dans le constructeur on ne peut pas y avoir acces depuis ici il faut faire en sort de créer la methode update dans space.java
+        //pour avoir acces a tous les objets, voir aussi au niveau du foreach plus simple et propre pour parcourir une linked list
+        /*
         for (int j = 0; j < objets.size(); j++) {
             // int Distx;
             // int Disty;
@@ -39,7 +43,7 @@ public abstract class ObjetCeleste {
                 vx += dirx;
                 vy += diry;
             }
-        }
+        } */
     }
 
     // déclatation des méthodes abstract
