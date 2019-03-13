@@ -9,17 +9,20 @@ public abstract class ObjetCeleste {
 
     //
     public double masse, vx, vy;
+    public int r;
     protected int x, y;
     protected Image disp;
     protected int temp;
 
-    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i) {
+    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon) {
         masse = m;
         x = ax;
         y = ay;
         disp = i;
         vx = vitx;
         vy = vity;
+        r = rayon;
+
 
         //bug : la linked list n'est pas dans le constructeur on ne peut pas y avoir acces depuis ici il faut faire en sort de créer la methode update dans space.java
         //pour avoir acces a tous les objets, voir aussi au niveau du foreach plus simple et propre pour parcourir une linked list

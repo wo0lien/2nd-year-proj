@@ -111,6 +111,13 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
                             angle = Math.atan2(dy, dx);
                             objet.vx += Force * Math.cos(angle);
                             objet.vy += Force * Math.sin(angle);
+                            
+                            if (Math.sqrt(r)+200 < objet.r + obj.r){
+                                System.out.println("Collision");
+                                objet.r += obj.r;
+                                objet.masse += obj.masse;
+                                objets.remove(obj);
+                            }
                         }
                     }
                 objet.update(dt);
@@ -257,7 +264,7 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
             case 2:
                 //sauvegarde de la planete dans la liste des objets
                 //remplacer le 2 par un coef en fonction des materiaux
-                Planete newp = new Planete((double)10000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet);
+                Planete newp = new Planete((double)750 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius);
                 objets.add(newp);
 
                 //repassage en mode 3
