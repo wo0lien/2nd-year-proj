@@ -54,6 +54,8 @@ public abstract class ObjetCeleste {
     public abstract void paint(Graphics g);
 
     public abstract void update(int dt);
+    
+    public abstract void resize();
 
     public int GetX() {
         return this.x;

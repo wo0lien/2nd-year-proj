@@ -34,4 +34,9 @@ public class Planete extends ObjetCeleste{
         this.x += dt * vx / 1000;
         this.y += dt * vy / 1000;
     }
+
+    @Override
+    public void resize(){
+        disp = disp.getScaledInstance(r * 2, r * 2, Image.SCALE_FAST);
+    }
 }

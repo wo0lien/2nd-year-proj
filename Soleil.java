@@ -24,4 +24,7 @@ public class Soleil extends ObjetCeleste {
 
     @Override
     public void update(int dt) {}
+
+    @Override
+    public void resize(int r){}
 }
