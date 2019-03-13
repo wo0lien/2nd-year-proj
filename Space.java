@@ -48,9 +48,12 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
     private int explosionX, explosionY, explosionCounter, explosionR;
     private boolean explosing;
 
+    private boolean frags;
+
     //objects
 
     private LinkedList<ObjetCeleste> objets; 
+    private LinkedList<ObjetCeleste> fragments;
 
     public Space(int xPos, int yPos, int x, int y) {
 
@@ -95,6 +98,9 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
         resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
 
         objets = new LinkedList<ObjetCeleste>();
+        fragments = new LinkedList<ObjetCeleste>();
+
+        frags = false;
 
         // ajout des listeners
 
@@ -127,35 +133,87 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
                             angle = Math.atan2(dy, dx);
                             objet.vx += Force * Math.cos(angle);
                             objet.vy += Force * Math.sin(angle);
+
+                            //difference de vitesse entre les 2 astres
+                            double deltaV = Math.abs(objet.vx - obj.vx) + Math.abs(objet.vy - obj.vy);
+                            //préparation de la collision
                             
                             if (Math.sqrt(r) < objet.r + obj.r && obj.masse < objet.masse){
-                                System.out.println("Collision");
-                                objet.r += obj.r;
-                                objet.masse += obj.masse;
-                                
-                                //animation de l'explosion
+                                //si elles vont vite l'une par rapport a l'autreS
+                                if (deltaV > 500) {
+                                    //explosion en petits sattelites
+                                    System.out.println("Explosionnn");
 
-                                explosionX = obj.GetX();
-                                explosionY = obj.GetY();
-                                explosionCounter = 0;
+                                    //généation des satellites
+                                    double n = 0;
+                                    int max = (int)(Math.random() * 6) + 5;
+                                    double m = (objet.GetMasse() + obj.GetMasse()) / max;
+                                    int ray = (objet.r + obj.r) / max;
+                                    int ax = (obj.GetX() + objet.GetX()) / 2;
+                                    int ay = (obj.GetY() + objet.GetY()) / 2;
 
-                                explosionR = obj.r;
-                                
-                                //resize Image
-                                resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
+                                    Image im = planetImage.getScaledInstance(ray * 2, ray * 2, Image.SCALE_FAST);
 
-                                //active l'affichage
-                                explosing = true;
+                                    
+                                    for (int i = 0; i < max; i++) {
 
-                                //on supprime l'objet 
-                                objets.remove(obj);
-                                objet.resize();
-                    
+                                        double vitx = 30 * Math.cos(n);
+                                        double vity = 30 * Math.sin(n);
+
+                                        System.out.println("masse " + m + " vitx " + vitx + " vity " + vity + " ax " + ax + " ay " + ay + " ray " + ray);
+
+                                        Planete pl = new Planete(m, vitx, vity, ax + (int)(vitx * 3), ay + (int)(vity * 3), im, ray);
+
+                                        fragments.push(pl);
+                                        //on veut des satellites dans toutes les directions
+                                        n += 6.28 / max;
+                                    }
+
+                                    frags = true;
+
+                                    objets.remove(obj);
+
+                                } else {
+                                    objet.r += obj.r;
+                                    objet.masse += obj.masse;
+                                    
+                                    //animation de l'explosion
+    
+                                    explosionX = obj.GetX();
+                                    explosionY = obj.GetY();
+                                    explosionCounter = 0;
+    
+                                    explosionR = obj.r;
+                                    
+                                    //resize Image
+                                    resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
+    
+                                    //active l'affichage
+                                    explosing = true;
+    
+                                    //on supprime l'objet 
+                                    objets.remove(obj);
+                                    objet.resize();
+                                }
                             }
                         }
                     }
-                objet.update(dt);
+                    if (!frags) {
+                        objet.update(dt);
+                    } else {
+                        objets.remove(objet);
+                        System.out.println("remove");
+                    }
                 }     
+            }
+
+            if (frags) {
+                frags = false;
+                for (ObjetCeleste fragm : fragments) {
+                    System.out.println("pushed");
+                    objets.push(fragm);
+                }
+                fragments.clear();
             }
 
             repaint();
