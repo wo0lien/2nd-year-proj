@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
@@ -18,16 +19,17 @@ import javax.swing.Timer;
 /**
  * Space
  */
-public class Space extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
+public class Space extends JPanel implements  MouseListener, MouseMotionListener {
 
     // timer
-    Timer t;
-    private int dt = 40, temps = 0;
+    private int temps = 0, dt=40;
     private boolean pause;
 
     // variable de modes en fonction des actions de l'utilisateur mode 0 normal,
     // mode 1 nouvelle planete
-
+    private int x;
+    private int y;
+    private int coeffZoom;
     private int mode = 0;
     private boolean mouseIn = false;
     private int mouseX = 0, mouseY = 0;
@@ -35,8 +37,7 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
 
     // Image pour l'affichage sans scintillements
     private BufferedImage monBuf; // buffer d’affichage
-
-    private BufferedImage spaceStars;
+    private Image spaceStars;
     private Image planetImage;
     private Image resizedPlanet;
 
@@ -51,9 +52,10 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
         this.setLayout(null);
         this.setBounds(xPos, yPos, x, y);
 
-        t = new Timer(dt, this);
         pause = true;
-        t.start();
+
+        this.x=x;
+        this.y=y;
 
         Dimension dim = getSize();
 
@@ -76,7 +78,6 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
 
         objets = new LinkedList<ObjetCeleste>();
@@ -90,10 +91,7 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
 
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == t) {
-
+    public void timerPerformed() {
             // si l'animation tourne on peut update la position des planetes
 
             if (!pause) {
@@ -114,11 +112,11 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
                         }
                     }
                 objet.update(dt);
-                }     
+                }    
+                temps+=1; 
             }
 
             repaint();
-        }
     }
 
     /**
@@ -201,6 +199,10 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
             break;
         }
 
+    }
+
+    public int getTemps() {
+        return temps;
     }
 
     //mouse motion methods
@@ -299,6 +301,18 @@ public class Space extends JPanel implements ActionListener, MouseListener, Mous
     @Override
     public void mouseExited(MouseEvent e) {
         mouseIn = false;
+    }
+
+    public void mouseWheelMoved(MouseWheelEvent e){ //gère bientot le zoom
+        if (e.getWheelRotation()<0) {
+            coeffZoom+=0.1;
+            coeffZoom=max(1,coeffZoom);
+            //scroll vers le haut
+        } else {
+            coeffZoom-=0.1;
+            coeffZoom=max(0.5,coeffZoom);
+            // scroll vers le bas
+        }
     }
 
 }

@@ -13,7 +13,12 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
 
     private JPanel mainPanel, footerPanel;
     private JButton newPlanet, timerButton;
+    private JTextArea timeCount;
     private Space space;
+
+    //timer
+    Timer t;
+    private int dt = 40;
 
     public Fenetre(String nom) throws AWTException{
         super(nom);
@@ -42,8 +47,12 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         timerButton = new JButton("Start animation");
         timerButton.setBounds(250, 20, 200, 60);
 
+        timeCount = new JTextArea("Jours : " + space.getTemps());
+        timeCount.setBounds(480,40,200,60);
+
         footerPanel.add(newPlanet);
         footerPanel.add(timerButton);
+        footerPanel.add(timeCount);
 
         mainPanel.add(footerPanel);
 
@@ -58,6 +67,10 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         //affichage de la fenetre et arret a la fermeture
         this.setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //consutrction du timer
+        t = new Timer(dt, this);
+        t.start();
     }
 
 
@@ -73,6 +86,9 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
             } else {
                 timerButton.setText("Start animation");
             }
+        } else if (e.getSource()==t) {
+            timeCount.setText("Jours : " + space.getTemps());
+            space.timerPerformed();
         }
     }
 
