@@ -28,11 +28,20 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private int tempsJours = 0, tempsAnnées=0, dt=40;
     private boolean pause;
 
+    //variables de zoom
+    private int zoomFactor=1, prevZoomFactor=1;
+    private boolean zoom;
+    private boolean dragger;
+    private boolean released;
+    private double xOffset = 0;
+    private double yOffset = 0;
+    private int xDiff;
+    private int yDiff;
+    private int startX;
+    private int startY;
+
     // variable de modes en fonction des actions de l'utilisateur mode 0 normal,
     // mode 1 nouvelle planete
-    private int x;
-    private int y;
-    private int coeffZoom;
     private int mode = 0;
     private boolean mouseIn = false;
     private int mouseX = 0, mouseY = 0;
@@ -55,6 +64,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     private LinkedList<ObjetCeleste> objets; 
     private LinkedList<ObjetCeleste> fragments;
+    private int size;
 
     public Space(int xPos, int yPos, int x, int y) {
 
@@ -64,9 +74,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         this.setBounds(xPos, yPos, x, y);
 
         pause = true;
-
-        this.x=x;
-        this.y=y;
 
         Dimension dim = getSize();
 
@@ -264,7 +271,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
      * Méthode pour précharger l'affichage et éviter les scintillements
      */
     public void Prepaint(Graphics g) {
-
         // draw background image
 
         g.drawImage(spaceStars, 0, 0, null);
@@ -313,8 +319,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             g.drawImage(resizedExplosion, explosionX - explosionR , explosionY - explosionR, null);
 
         } 
-        //resizeScreen(g);
-
     }
 
     public int getTempsJours() {
@@ -328,6 +332,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        xDiff = e.getLocationOnScreen().getX() - startX;
+        yDiff = e.getLocationOnScreen().getY() - startY;
+
+        dragger = true;
+        //repaint();
 
     }
 
@@ -362,54 +371,66 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        switch (mode) {
-            case 0:
-                //chose qui se passe quand le jeu est en mode normal
-                break;
-            case 1:
-                //fixage de la position de la nouvelle planete
-                newPlanetX = e.getX();
-                newPlanetY = e.getY();
-                //passage au mode suivant
-                System.out.println("Passe au mode selection taille");
-                mode = 2;
-                break;
+        if (e.getButton()==MouseEvent.BUTTON1) {
+            size=objets.size();
+            switch (mode) {
+                case 0:
+                    //chose qui se passe quand le jeu est en mode normal
+                    break;
+                case 1:
+                    //fixage de la position de la nouvelle planete
+                    newPlanetX = e.getX();
+                    newPlanetY = e.getY();
+                    //passage au mode suivant
+                    System.out.println("Passe au mode selection taille");
+                    mode = 2;
+                    break;
 
-            case 2:
-                //sauvegarde de la planete dans la liste des objets
-                //remplacer le 2 par un coef en fonction des materiaux
-                Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius);
-                objets.add(newp);
+                case 2:
+                    //sauvegarde de la planete dans la liste des objets
+                    //remplacer le 2 par un coef en fonction des materiaux
+                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius);
+                    objets.add(newp);
 
-                //repassage en mode 3
-                System.out.println("Passage au mode selection vitesse");
-                mode = 3;
-                break;
-            case 3:
+                    //repassage en mode 3
+                    System.out.println("Passage au mode selection vitesse");
+                    mode = 3;
+                    break;
+                case 3:
 
-                // on assigne a la planete la vitesse en x et en y en fonction de la position du curseur
+                    // on assigne a la planete la vitesse en x et en y en fonction de la position du curseur
 
-                objets.get(objets.size() - 1).setVitesseX((double)e.getX() - newPlanetX);
-                objets.get(objets.size() - 1).setVitesseY((double)e.getY() - newPlanetY);
-                
-                //retour au mode 0
+                    objets.get(objets.size() - 1).setVitesseX((double)e.getX() - newPlanetX);
+                    objets.get(objets.size() - 1).setVitesseY((double)e.getY() - newPlanetY);
+                    
+                    //retour au mode 0
 
-                mode = 0;
+                    mode = 0;
 
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            System.out.println("annulation du placement de la planète");
+            mode=0;
+            if (size!=objets.size()){
+                objets.removeLast();
+            }
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        released = false;
+        startX = e.getX();
+        startY = e.getY();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        released = true;
+        //repaint();
     }
 
     @Override
@@ -424,18 +445,43 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     public void mouseWheelMoved(MouseWheelEvent e){ //gère bientot le zoom
         if (e.getWheelRotation()<0) {
-            coeffZoom+=0.1;
-            coeffZoom=max(2,coeffZoom);
+            zoomFactor*=1.1;
+            zoomFactor=max(2,zoomFactor);
+            //repaint();
             //scroll vers le haut
         } else {
-            coeffZoom-=0.1;
-            coeffZoom=max(1,coeffZoom);
+            zoomFactor/=1.1;
+            zoomFactor=max(1,zoomFactor);
+            //repaint();
             // scroll vers le bas
         }
     }
-
-    public void resizeScreen(Graphics g){
-        monBuf = monBuf.getScaledInstance(x*coeffZoom, y*coeffZoom, Image.SCALE_FAST);
+    public void zoom(Graphics g) {
+         //implementation du zoom
+         Graphics g2= (Graphics) g;
+         if (zoom) {
+             double xRel = mouseX - getLocationOnScreen().getX();
+             double yRel = mouseY - getLocationOnScreen().getY();
+ 
+             double zoomDiv = zoomFactor / prevZoomFactor;
+ 
+             xOffset = (zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel;
+             yOffset = (zoomDiv) * (yOffset) + (1 - zoomDiv) * yRel;
+ 
+             g2.translate((int)xOffset,(int)yOffset);
+             g2.scale(zoomFactor, zoomFactor);
+             prevZoomFactor = zoomFactor;
+             zoom = false;
+         }
+         if (dragger) {
+             g2.translate((int)(xOffset + xDiff),(int)( yOffset + yDiff);
+             g2.scale(zoomFactor, zoomFactor);
+             if (released) {
+                 xOffset += xDiff;
+                 yOffset += yDiff;
+                 dragger = false;
+             }
+         } 
+         g=g2;
     }
-
 }
