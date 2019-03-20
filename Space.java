@@ -25,7 +25,7 @@ import java.net.URL;
 public class Space extends JPanel implements  MouseListener, MouseMotionListener {
 
     // timer
-    private int temps = 0, dt=40;
+    private int tempsJours = 0, tempsAnnées=0, dt=40;
     private boolean pause;
 
     // variable de modes en fonction des actions de l'utilisateur mode 0 normal,
@@ -203,9 +203,14 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         objets.remove(objet);
                         System.out.println("remove");
                     }
-                }     
+                }  
+                tempsJours++;
+                if (tempsJours==365) {
+                    tempsJours=0;
+                    tempsAnnées++;
+                }
             }
-
+            
             if (frags) {
                 frags = false;
                 for (ObjetCeleste fragm : fragments) {
@@ -308,11 +313,15 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             g.drawImage(resizedExplosion, explosionX - explosionR , explosionY - explosionR, null);
 
         } 
+        //resizeScreen(g);
 
     }
 
-    public int getTemps() {
-        return temps;
+    public int getTempsJours() {
+        return tempsJours;
+    }
+    public int getTempsAnnées() {
+        return tempsAnnées;
     }
 
     //mouse motion methods
@@ -416,13 +425,17 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void mouseWheelMoved(MouseWheelEvent e){ //gère bientot le zoom
         if (e.getWheelRotation()<0) {
             coeffZoom+=0.1;
-            coeffZoom=max(1,coeffZoom);
+            coeffZoom=max(2,coeffZoom);
             //scroll vers le haut
         } else {
             coeffZoom-=0.1;
-            coeffZoom=max(0.5,coeffZoom);
+            coeffZoom=max(1,coeffZoom);
             // scroll vers le bas
         }
+    }
+
+    public void resizeScreen(Graphics g){
+        monBuf = monBuf.getScaledInstance(x*coeffZoom, y*coeffZoom, Image.SCALE_FAST);
     }
 
 }

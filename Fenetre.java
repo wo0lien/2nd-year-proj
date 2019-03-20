@@ -13,7 +13,7 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
 
     private JPanel mainPanel, footerPanel;
     private JButton newPlanet, timerButton;
-    private JTextArea timeCount;
+    private JTextArea timeCountJours, timeCountYears;
     private Space space;
 
     //timer
@@ -47,12 +47,16 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         timerButton = new JButton("Start animation");
         timerButton.setBounds(250, 20, 200, 60);
 
-        timeCount = new JTextArea("Jours : " + space.getTemps());
-        timeCount.setBounds(480,40,200,60);
+        timeCountJours = new JTextArea("Jours : " + space.getTempsJours());
+        timeCountJours.setBounds(480,40,200,60);
+
+        timeCountYears = new JTextArea("Années : " + space.getTempsAnnées());
+        timeCountYears.setBounds(480,60,200,60);
 
         footerPanel.add(newPlanet);
         footerPanel.add(timerButton);
-        footerPanel.add(timeCount);
+        footerPanel.add(timeCountJours);
+        footerPanel.add(timeCountYears);
 
         mainPanel.add(footerPanel);
 
@@ -87,7 +91,8 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
                 timerButton.setText("Start animation");
             }
         } else if (e.getSource()==t) {
-            timeCount.setText("Jours : " + space.getTemps());
+            timeCountJours.setText("Jours : " + space.getTempsJours());
+            timeCountYears.setText("Années : " + space.getTempsAnnées());
             space.timerPerformed();
         }
     }
