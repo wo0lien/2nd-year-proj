@@ -89,8 +89,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         } catch (Exception e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
-=======
         try {
             explosion = new ImageIcon("explosion.gif").getImage();
         } catch (Exception e) {
@@ -99,7 +97,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         //resize explosion
         resizedExplosion = explosion.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
->>>>>>> d520b424e9f4bcfa279f33e8f55ee9385b09dd0a
         resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
 
         objets = new LinkedList<ObjetCeleste>();
@@ -200,11 +197,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                             }
                         }
                     }
-<<<<<<< HEAD
-                objet.update(dt);
-                }    
-                temps+=1; 
-=======
                     if (!frags) {
                         objet.update(dt);
                     } else {
@@ -212,7 +204,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         System.out.println("remove");
                     }
                 }     
->>>>>>> d520b424e9f4bcfa279f33e8f55ee9385b09dd0a
             }
 
             if (frags) {
