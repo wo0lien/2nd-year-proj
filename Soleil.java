@@ -7,8 +7,8 @@ import java.awt.Image;
  */
 public class Soleil extends ObjetCeleste {
 
-    public Soleil(double m, int ax, int ay, Image i) {
-        super(m, 0, 0, ax, ay, i); //un soleil est une étoile fixe avec vitesse = 0
+    public Soleil(double m, int ax, int ay, Image i, int rayon) {
+        super(m, 0, 0, ax, ay, i, rayon); //un soleil est une étoile fixe avec vitesse = 0
     }
 
     public void paint(Graphics g){
@@ -24,4 +24,7 @@ public class Soleil extends ObjetCeleste {
 
     @Override
     public void update(int dt) {}
+
+    @Override
+    public void resize(int r){}
 }
