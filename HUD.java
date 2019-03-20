@@ -30,14 +30,6 @@ public class HUD extends JPanel {
         Chimie.setText("Eléments chimques présents : ");
         Contour.setVisible(true);
 
-
-
-
-        
-    }
-	public static void main (String args[]) {
-        System.out.print("coucou");
-        HUD h = new HUD();
     }
 
 }
