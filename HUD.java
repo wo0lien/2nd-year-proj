@@ -120,7 +120,7 @@ public class HUD extends JPanel {
         g.drawString("Nom de la Planète : ", 40, 100);
         g.drawString(planetName, 40, 130);
         g.drawString("Températures :", 40, 280);
-        g.drawString("Elements Chimiques :", 40, 420);
+        g.drawString("Elements Chimiques :", 40, 440);
         Font G = new Font("G", 1, 15);
         g.setFont(G);
         g.drawString("Distance au Soleil : ", 40, _200);
@@ -135,10 +135,10 @@ public class HUD extends JPanel {
         g.setColor(Color.RED);
         g.drawString("val" + " °C", 200,400 );
         g.setColor(Color.WHITE);
-        g.drawString("Azote", 40,440 );
-        g.drawString("Carbone", 40,480 );
-        g.drawString("Oxygène", 40,520 );
-        g.drawString("Hydrogène", 40,540 );
+        g.drawString("Azote", 40,480 );
+        g.drawString("Carbone", 40,520 );
+        g.drawString("Oxygène", 40,560 );
+        g.drawString("Hydrogène", 40,600 );
 
     
 
