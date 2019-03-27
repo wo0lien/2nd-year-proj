@@ -13,8 +13,9 @@ public abstract class ObjetCeleste {
     protected int x, y;
     protected Image disp;
     protected int temp;
+    private HUD hud;
 
-    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon) {
+    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon, HUD hud) {
         masse = m;
         x = ax;
         y = ay;
@@ -22,6 +23,7 @@ public abstract class ObjetCeleste {
         vx = vitx;
         vy = vity;
         r = rayon;
+        this.hud=hud;
 
 
         //bug : la linked list n'est pas dans le constructeur on ne peut pas y avoir acces depuis ici il faut faire en sort de créer la methode update dans space.java
@@ -67,6 +69,10 @@ public abstract class ObjetCeleste {
 
     public double GetMasse(){
         return this.masse;
+    }
+
+    public HUD getHUD() {
+        return hud;
     }
 
     public abstract void setVitesseX(double vx);

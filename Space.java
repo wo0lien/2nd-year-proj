@@ -40,6 +40,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private int startX;
     private int startY;
 
+    //hud courant pour pouvoir l'afficher dans la 
+    private HUD hudCourant;
+
     // variable de modes en fonction des actions de l'utilisateur mode 0 normal,
     // mode 1 nouvelle planete
     private int mode = 0;
@@ -74,6 +77,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         this.setBounds(xPos, yPos, x, y);
 
         pause = true;
+
+        hudCourant=new HUD();
 
         Dimension dim = getSize();
 
@@ -168,7 +173,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
                                         System.out.println("masse " + m + " vitx " + vitx + " vity " + vity + " ax " + ax + " ay " + ay + " ray " + ray);
 
-                                        Planete pl = new Planete(m, vitx, vity, ax + (int)(vitx * 3), ay + (int)(vity * 3), im, ray);
+                                        HUD hud = new HUD(this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+                                        Planete pl = new Planete(m, vitx, vity, ax + (int)(vitx * 3), ay + (int)(vity * 3), im, ray,hud);
 
                                         fragments.push(pl);
                                         //on veut des satellites dans toutes les directions
@@ -327,13 +333,16 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public int getTempsAnnées() {
         return tempsAnnées;
     }
+    public HUD getHUD() {
+        return hudCourant;
+    }
 
     //mouse motion methods
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        xDiff = e.getLocationOnScreen().getX() - startX;
-        yDiff = e.getLocationOnScreen().getY() - startY;
+        //xDiff = e.getLocationOnScreen().getX() - startX;
+        //yDiff = e.getLocationOnScreen().getY() - startY;
 
         dragger = true;
         //repaint();
@@ -376,6 +385,16 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             switch (mode) {
                 case 0:
                     //chose qui se passe quand le jeu est en mode normal
+                    // clicker sur une planete pour afficher son hud
+                    for (ObjetCeleste obj : objets) {
+                        double dx = obj.GetX() - e.getX();
+                        double dy = obj.GetY() - e.getY();
+                        double r = Math.sqrt(dx * dx + dy * dy);
+                        if (r < obj.r) {
+                            System.out.println("j'affiche le hud");
+                            hudCourant=obj.getHUD();
+                        }
+                    }
                     break;
                 case 1:
                     //fixage de la position de la nouvelle planete
@@ -389,7 +408,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 2:
                     //sauvegarde de la planete dans la liste des objets
                     //remplacer le 2 par un coef en fonction des materiaux
-                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius);
+                    HUD hud= new HUD(this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud);
                     objets.add(newp);
 
                     //repassage en mode 3
@@ -411,13 +431,17 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 default:
                     break;
             }
-        } else {
-            System.out.println("annulation du placement de la planète");
+        } else if (e.getButton()==MouseEvent.BUTTON3) {
+            cancelPLanet();
+        }
+    }
+
+    public void cancelPLanet() {
+        System.out.println("annulation du placement de la planète");
             mode=0;
             if (size!=objets.size()){
                 objets.removeLast();
             }
-        }
     }
 
     @Override

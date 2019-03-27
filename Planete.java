@@ -7,8 +7,8 @@ import java.awt.Image;
  */
 public class Planete extends ObjetCeleste{
 
-    public Planete(double m, double vx, double vy, int ax, int ay, Image i, int rayon) {
-        super(m, vx, vy, ax, ay, i,rayon); //on appelle le constructeur de la class parente ObjCelestes
+    public Planete(double m, double vx, double vy, int ax, int ay, Image i, int rayon, HUD hud) {
+        super(m, vx, vy, ax, ay, i,rayon,hud); //on appelle le constructeur de la class parente ObjCelestes
     }
 
     public void paint(Graphics g) {

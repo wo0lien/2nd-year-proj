@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 
 public class HUD extends JPanel {
 
+    String planetName;
+
     //variables Louise
 
    /* private JPanel Contour;
@@ -31,7 +33,19 @@ public class HUD extends JPanel {
     private static final int _200 = 200;
     private int h, w;
 
+    public HUD() {
+        h = this.getHeight();
+        w = this.getWidth();
+    }
+
     public HUD(int x, int y, int ax, int ay) {
+
+        String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
+                "t", "u", "v", "w", "x", "y", "z" };
+
+        planetName = c[(int) (Math.random() * 26)].toUpperCase() + c[(int) (Math.random() * 26)].toUpperCase()
+                + "-" + ((int) (Math.random() * 9999)) + "-" + c[(int) (Math.random() * 26)].toUpperCase()
+                + c[(int) (Math.random() * 26)].toUpperCase();
 
         this.setBounds(x, y, ax, ay);
         this.setBackground(Color.black);
@@ -104,12 +118,6 @@ public class HUD extends JPanel {
         Font F = new Font("F", 1, 20);
         g.setFont(F);
         g.drawString("Nom de la Planète : ", 40, 100);
-        String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
-                "t", "u", "v", "w", "x", "y", "z" };
-
-        String planetName = c[(int) (Math.random() * 26)].toUpperCase() + c[(int) (Math.random() * 26)].toUpperCase()
-                + "-" + ((int) (Math.random() * 9999)) + "-" + c[(int) (Math.random() * 26)].toUpperCase()
-                + c[(int) (Math.random() * 26)].toUpperCase();
         g.drawString(planetName, 40, 130);
 		g.drawString("Températures :", 40, 280);
         Font G = new Font("H", 1, 15);

@@ -62,7 +62,7 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
 
         //side panel
 
-        hud = new HUD(this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+        hud = new HUD();
         mainPanel.add(hud);
 
         //ajout du panel à la fenetre principale
@@ -90,6 +90,7 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
             space.NewPlanet();
         } else if (e.getSource() == timerButton){
             space.TimerButton();
+            space.cancelPLanet();
             if (timerButton.getText() == "Start animation") {
                 timerButton.setText("Stop animation");
             } else {
@@ -99,6 +100,10 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
             timeCountJours.setText("Jours : " + space.getTempsJours());
             timeCountYears.setText("Années : " + space.getTempsAnnées());
             space.timerPerformed();
+            hud=space.getHUD();
+            hud.repaint();
+            mainPanel.add(hud);
+
         }
     }
 
