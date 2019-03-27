@@ -119,6 +119,13 @@ public class HUD extends JPanel {
         g.drawString("moyenne :", 50,320 );
         g.drawString("min :", 50,360 );
         g.drawString("max :", 50,400 );
+        g.setColor(Color.GREEN);
+        g.drawString("val" + " °C", 200,320 );
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawString("val" + " °C", 200,360 );
+        g.setColor(Color.RED);
+        g.drawString("val" + " °C", 200,400 );
+
 
 
         
