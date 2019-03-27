@@ -40,8 +40,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private int startX;
     private int startY;
 
-    //hud courant pour pouvoir l'afficher dans la 
+    //hud courant pour pouvoir l'afficher dans la fenetre
     private HUD hudCourant;
+    private int bx,by,ax,ay;
 
     // variable de modes en fonction des actions de l'utilisateur mode 0 normal,
     // mode 1 nouvelle planete
@@ -69,7 +70,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private LinkedList<ObjetCeleste> fragments;
     private int size;
 
-    public Space(int xPos, int yPos, int x, int y) {
+    public Space(int xPos, int yPos, int x, int y,int bx, int by, int ax, int ay) {
 
         System.out.println("Create the universe");
 
@@ -77,6 +78,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         this.setBounds(xPos, yPos, x, y);
 
         pause = true;
+
+        this.bx=bx;
+        this.by=by;
+        this.ax=ax;
+        this.ay=ay;
 
         hudCourant=new HUD();
 
@@ -173,7 +179,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
                                         System.out.println("masse " + m + " vitx " + vitx + " vity " + vity + " ax " + ax + " ay " + ay + " ray " + ray);
 
-                                        HUD hud = new HUD(this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+                                        HUD hud = new HUD(bx,by,ax,ay);
                                         Planete pl = new Planete(m, vitx, vity, ax + (int)(vitx * 3), ay + (int)(vity * 3), im, ray,hud);
 
                                         fragments.push(pl);
@@ -408,7 +414,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 2:
                     //sauvegarde de la planete dans la liste des objets
                     //remplacer le 2 par un coef en fonction des materiaux
-                    HUD hud= new HUD(this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+                    HUD hud= new HUD(bx,by,ax,ay);
                     Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud);
                     objets.add(newp);
 
