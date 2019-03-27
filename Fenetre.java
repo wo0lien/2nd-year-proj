@@ -11,7 +11,7 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
 
     //variables
 
-    private JPanel mainPanel, footerPanel;
+    private JPanel mainPanel, footerPanel, hud;
     private JButton newPlanet, timerButton;
     private JTextArea timeCountJours, timeCountYears;
     private Space space;
@@ -23,7 +23,7 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
     public Fenetre(String nom) throws AWTException{
         super(nom);
 
-        this.setSize(1000, 850);
+        this.setSize(1400, 850);
 
         //Jpanel principal (content pane)
         mainPanel = new JPanel();
@@ -31,7 +31,7 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         mainPanel.setBackground(Color.black);
 
         //création du JPanel Space a la taille de la fenetre
-        space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+        space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
         mainPanel.add(space);
 
         //panel de bas de page
@@ -59,6 +59,11 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         footerPanel.add(timeCountYears);
 
         mainPanel.add(footerPanel);
+
+        //side panel
+
+        hud = new HUD(this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+        mainPanel.add(hud);
 
         //ajout du panel à la fenetre principale
         this.setContentPane(mainPanel);
