@@ -31,7 +31,7 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         mainPanel.setBackground(Color.black);
 
         //création du JPanel Space a la taille de la fenetre
-        space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+        space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150,this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
         mainPanel.add(space);
 
         //panel de bas de page
