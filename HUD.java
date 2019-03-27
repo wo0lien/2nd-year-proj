@@ -16,10 +16,14 @@ public class HUD extends JPanel {
     private JLabel DTemp;
     private JLabel Chimie;
     private JLabel Criteres;
+    private boolean visible=false;
 
     // taille de la fenetre
 
     private int h,w;
+
+    public HUD() {
+    }
     
     public HUD(int x, int y, int ax, int ay){
         
