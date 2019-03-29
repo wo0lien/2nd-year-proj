@@ -37,6 +37,6 @@ public class Planete extends ObjetCeleste{
 
     @Override
     public void resize(){
-        disp = disp.getScaledInstance(r * 2, r * 2, Image.SCALE_FAST);
+        disp = disp.getScaledInstance(2*rZoom,2*rZoom, Image.SCALE_SMOOTH);
     }
 }

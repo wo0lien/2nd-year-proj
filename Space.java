@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
@@ -22,27 +23,19 @@ import java.net.URL;
 /**
  * Space
  */
-public class Space extends JPanel implements  MouseListener, MouseMotionListener {
+public class Space extends JPanel implements  MouseListener, MouseMotionListener,MouseWheelListener {
 
     // timer
     private int tempsJours = 0, tempsAnnées=0, dt=40;
     private boolean pause;
 
     //variables de zoom
-    private int zoomFactor=1, prevZoomFactor=1;
-    private boolean zoom;
-    private boolean dragger;
-    private boolean released;
-    private double xOffset = 0;
-    private double yOffset = 0;
-    private int xDiff;
-    private int yDiff;
-    private int startX;
-    private int startY;
+    private double zoomFactor=1;
 
     //hud courant pour pouvoir l'afficher dans la fenetre
     private HUD hudCourant;
     private int bx,by,ax,ay;
+    private ObjetCeleste objSelected;
 
     // variable de modes en fonction des actions de l'utilisateur mode 0 normal,
     // mode 1 nouvelle planete
@@ -85,6 +78,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         this.ay=ay;
 
         hudCourant=new HUD();
+        objSelected=null;
 
         Dimension dim = getSize();
 
@@ -126,6 +120,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+        this.addMouseWheelListener(this);
 
         repaint();
 
@@ -253,7 +248,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         newPlanetRadius = 20;
         newPlanetX = 0;
         newPlanetY = 0;
-        resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
+        resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_SMOOTH);
 
         mode = 1;
     }
@@ -291,6 +286,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         for (ObjetCeleste obj : objets) {
             obj.paint(g);
+        }
+
+        //mise en valeur de l'objet celeste sélectionné
+        if (objSelected!=null) {
+            g.setColor(Color.WHITE);
+            g.drawRect(objSelected.x-objSelected.rZoom-5,objSelected.y-objSelected.rZoom-5,objSelected.rZoom*2+10,objSelected.rZoom*2+10);
         }
 
         // prise en compte du mode
@@ -347,12 +348,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        //xDiff = e.getLocationOnScreen().getX() - startX;
-        //yDiff = e.getLocationOnScreen().getY() - startY;
-
-        dragger = true;
-        //repaint();
-
     }
 
     @Override
@@ -399,6 +394,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         if (r < obj.r) {
                             System.out.println("j'affiche le hud");
                             hudCourant=obj.getHUD();
+                            objSelected=obj;
                         }
                     }
                     break;
@@ -452,15 +448,10 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mousePressed(MouseEvent e) {
-        released = false;
-        startX = e.getX();
-        startY = e.getY();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        released = true;
-        //repaint();
     }
 
     @Override
@@ -473,45 +464,32 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         mouseIn = false;
     }
 
-    public void mouseWheelMoved(MouseWheelEvent e){ //gère bientot le zoom
+    public void mouseWheelMoved(MouseWheelEvent e){ //gère le zoom
+        //il y a un souci (en tout cas sur trackpad) : il détecte qu'on va dans le mauvais sens !!!!
         if (e.getWheelRotation()<0) {
             zoomFactor*=1.1;
-            zoomFactor=max(2,zoomFactor);
-            //repaint();
+            zoomFactor=Math.min(10.0,zoomFactor);  
+            if (zoomFactor<10) {
+                zoom();
+                repaint();
+            }        
             //scroll vers le haut
         } else {
             zoomFactor/=1.1;
-            zoomFactor=max(1,zoomFactor);
-            //repaint();
+            zoomFactor=Math.max(0.5,zoomFactor);
+            if (zoomFactor>0.5) {
+                zoom();
+                repaint();
+            } 
             // scroll vers le bas
         }
+        System.out.println("zoom : " + zoomFactor);
     }
-    public void zoom(Graphics g) {
+    public void zoom() {
          //implementation du zoom
-         Graphics g2= (Graphics) g;
-         if (zoom) {
-             double xRel = mouseX - getLocationOnScreen().getX();
-             double yRel = mouseY - getLocationOnScreen().getY();
- 
-             double zoomDiv = zoomFactor / prevZoomFactor;
- 
-             xOffset = (zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel;
-             yOffset = (zoomDiv) * (yOffset) + (1 - zoomDiv) * yRel;
- 
-             g2.translate((int)xOffset,(int)yOffset);
-             g2.scale(zoomFactor, zoomFactor);
-             prevZoomFactor = zoomFactor;
-             zoom = false;
-         }
-         if (dragger) {
-             g2.translate((int)(xOffset + xDiff),(int)( yOffset + yDiff);
-             g2.scale(zoomFactor, zoomFactor);
-             if (released) {
-                 xOffset += xDiff;
-                 yOffset += yDiff;
-                 dragger = false;
-             }
-         } 
-         g=g2;
+        for (ObjetCeleste obj : objets) {
+            obj.resize();
+            obj.zoomUpdate(zoomFactor, mouseX, mouseY);
+        }
     }
 }
