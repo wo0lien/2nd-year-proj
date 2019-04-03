@@ -31,6 +31,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     //variables de zoom
     private double zoomFactor=1;
+    private double prevZoom;
+    private double pprevZoom;
+    private int rotation; //0 no rotation, 1 zoom in, -1 zoom out
+    private double xOffset; //coordonnées d'un point 'fixe'
+    private double yOffset;
 
     //hud courant pour pouvoir l'afficher dans la fenetre
     private HUD hudCourant;
@@ -81,6 +86,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         objSelected=null;
 
         Dimension dim = getSize();
+
+        xOffset=dim.width/2;
+        yOffset=dim.height/2;
 
         // buffered image
         monBuf = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
@@ -291,11 +299,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         //mise en valeur de l'objet celeste sélectionné
         if (objSelected!=null) {
             g.setColor(Color.WHITE);
-            g.drawRect(objSelected.x-objSelected.rZoom-5,objSelected.y-objSelected.rZoom-5,objSelected.rZoom*2+10,objSelected.rZoom*2+10);
+            g.drawRect(objSelected.xZ-objSelected.rZoom-5,objSelected.yZ-objSelected.rZoom-5,objSelected.rZoom*2+10,objSelected.rZoom*2+10);
         }
 
         // prise en compte du mode
-
+        String str = "xOffset : " +xOffset + " yOffset : " + yOffset;
+        g.drawString(str,mouseX,mouseY);
         switch (mode) {
         case 0:
             // affichage classique de l'animation
@@ -354,6 +363,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void mouseMoved(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
+        updateOffset();
 
         switch (mode) {
             case 0:
@@ -387,9 +397,10 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 0:
                     //chose qui se passe quand le jeu est en mode normal
                     // clicker sur une planete pour afficher son hud
+                    //implémentation du zoom : penser à prendre l'offset en compte
                     for (ObjetCeleste obj : objets) {
-                        double dx = obj.GetX() - e.getX();
-                        double dy = obj.GetY() - e.getY();
+                        double dx = obj.GetX() - (int)(e.getX());
+                        double dy = obj.GetY() - (int)(e.getY());
                         double r = Math.sqrt(dx * dx + dy * dy);
                         if (r < obj.r) {
                             System.out.println("j'affiche le hud");
@@ -465,31 +476,54 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     }
 
     public void mouseWheelMoved(MouseWheelEvent e){ //gère le zoom
-        //il y a un souci (en tout cas sur trackpad) : il détecte qu'on va dans le mauvais sens !!!!
         if (e.getWheelRotation()<0) {
             zoomFactor*=1.1;
             zoomFactor=Math.min(10.0,zoomFactor);  
-            if (zoomFactor<10) {
+            testRotation();
+            if (zoomFactor<10 && rotation==1) {
                 zoom();
                 repaint();
             }        
             //scroll vers le haut
         } else {
             zoomFactor/=1.1;
-            zoomFactor=Math.max(0.5,zoomFactor);
-            if (zoomFactor>0.5) {
+            zoomFactor=Math.max(0.1,zoomFactor);
+            testRotation();
+            if (zoomFactor>0.1 && rotation==-1) {
                 zoom();
                 repaint();
             } 
             // scroll vers le bas
         }
-        System.out.println("zoom : " + zoomFactor);
+        System.out.println("zoom : "  + zoomFactor);
+        System.out.println("Rotation : " + rotation);
     }
+
     public void zoom() {
          //implementation du zoom
         for (ObjetCeleste obj : objets) {
             obj.resize();
             obj.zoomUpdate(zoomFactor, mouseX, mouseY);
         }
+        //coordonnées du point central de l'écran
+    }
+
+    //déterminer la position réelle de la sourie sur la map
+    public void updateOffset() {
+        xOffset=-(double)(xOffset-mouseX)/zoomFactor+xOffset;
+        yOffset=-(double)(yOffset-mouseY)/zoomFactor+yOffset;
+    }
+
+    //fluidifier le mouvement de la molette qui est parfois imprécis
+    public void testRotation() {
+        if (zoomFactor>prevZoom && prevZoom>pprevZoom) {
+            rotation=1;
+        } else if (zoomFactor<prevZoom && prevZoom<pprevZoom) {
+            rotation=-1;
+        } else {
+            rotation=0;
+        }
+        pprevZoom=prevZoom;
+        prevZoom=zoomFactor;
     }
 }
