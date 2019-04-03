@@ -33,9 +33,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private double zoomFactor=1;
     private double prevZoom;
     private double pprevZoom;
+    private double ppprevZoom;
     private int rotation; //0 no rotation, 1 zoom in, -1 zoom out
     private double xOffset; //coordonnées d'un point 'fixe'
     private double yOffset;
+    private double xxOffset;
+    private double yyOffset;
 
     //hud courant pour pouvoir l'afficher dans la fenetre
     private HUD hudCourant;
@@ -299,6 +302,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         //affichage de la liste des objets
 
         for (ObjetCeleste obj : objets) {
+            if (rotation==0) {
+                obj.zoomUpdate(zoomFactor, xxOffset, yOffset);
+            } 
             obj.paint(g);
         }
 
@@ -309,7 +315,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         }
 
         // prise en compte du mode
-        String str = "xOffset : " +xOffset + " yOffset : " + yOffset;
+        String str = "xOffset : " +xxOffset + " yOffset : " + yyOffset;
         g.drawString(str,mouseX,mouseY);
         switch (mode) {
         case 0:
@@ -369,7 +375,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void mouseMoved(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
-        updateOffset();
 
         switch (mode) {
             case 0:
@@ -501,8 +506,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             } 
             // scroll vers le bas
         }
-        System.out.println("zoom : "  + zoomFactor);
-        System.out.println("Rotation : " + rotation);
+        rotation=0;
     }
 
     public void zoom() {
@@ -516,19 +520,21 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     //déterminer la position réelle de la sourie sur la map
     public void updateOffset() {
-        xOffset=-(double)(xOffset-mouseX)/zoomFactor+xOffset;
-        yOffset=-(double)(yOffset-mouseY)/zoomFactor+yOffset;
+        xxOffset=mouseX-(xOffset-mouseX)/zoomFactor;
+        yyOffset=yOffset-(yOffset-mouseY)/zoomFactor;
     }
 
     //fluidifier le mouvement de la molette qui est parfois imprécis
     public void testRotation() {
-        if (zoomFactor>prevZoom && prevZoom>pprevZoom) {
+        updateOffset();
+        if (zoomFactor>prevZoom && prevZoom>pprevZoom && pprevZoom>ppprevZoom) {
             rotation=1;
-        } else if (zoomFactor<prevZoom && prevZoom<pprevZoom) {
+        } else if (zoomFactor<prevZoom && prevZoom<pprevZoom && pprevZoom<ppprevZoom) {
             rotation=-1;
         } else {
             rotation=0;
         }
+        ppprevZoom=pprevZoom;
         pprevZoom=prevZoom;
         prevZoom=zoomFactor;
     }

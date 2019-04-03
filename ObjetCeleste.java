@@ -82,10 +82,10 @@ public abstract class ObjetCeleste {
     public HUD getHUD() {
         return hud;
     }
-    public void zoomUpdate(double zoom,double xOffset, double yOffset) {
+    public void zoomUpdate(double zoom,double mouseX, double mouseY) {
         zoomCoeff=zoom;
-        xZ = (int)(xOffset-(xOffset-x)*zoomCoeff);
-        yZ = (int)(yOffset-(yOffset-y)*zoomCoeff);
+        xZ = (int)(mouseX-(mouseX-x)*zoomCoeff);
+        yZ = (int)(mouseY-(mouseY-y)*zoomCoeff);
         rZoom=(int)(r*zoomCoeff);
     }
     public void zoomUpdate() {
