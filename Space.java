@@ -172,6 +172,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                                 //active l'affichage
                                 explosing = true;
     
+                                    //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
+                                if (objSelected==obj) {
+                                    objSelected=objet;
+                                }
+
                                 //on supprime l'objet 
                                 objets.remove(obj);
                                 objet.resize();
@@ -179,7 +184,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         }
                     }
                     objet.update(dt);
-                }  
+                }
                 tempsJours++;
                 if (tempsJours==365) {
                     tempsJours=0;
