@@ -95,4 +95,8 @@ public abstract class ObjetCeleste {
     public abstract void setVitesseX(double vx);
 
     public abstract void setVitesseY(double vy);
+
+    public String getType() {
+        return "";
+    }
 }

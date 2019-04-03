@@ -2,18 +2,28 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 
+import java.io.File;
+import javax.imageio.ImageIO;
+
 /**
  * Soleil
  */
 public class Soleil extends ObjetCeleste {
 
-    public Soleil(double m, int ax, int ay, Image i, int rayon) {
-        super(m, 0, 0, ax, ay, i, rayon); //un soleil est une étoile fixe avec vitesse = 0
+    public Soleil(double m, int ax, int ay, Image i, int rayon, HUD hud) {
+        super(m, 0, 0, ax, ay, i, rayon, hud); //un soleil est une étoile fixe avec vitesse = 0
+
+        try {
+            File pathToSun = new File("sun.png"); 
+            //transformation en objet image des fichier    
+            imageObjet = ImageIO.read(pathToSun);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void paint(Graphics g){
-        g.setColor(Color.white);
-        g.fillOval(this.x - 15, this.y - 15, 30, 30);
+        g.drawImage(disp, this.xZ - disp.getWidth(null) / 2, this.yZ - disp.getHeight(null) / 2, null);
     }
 
     @Override
@@ -26,5 +36,12 @@ public class Soleil extends ObjetCeleste {
     public void update(int dt) {}
 
     @Override
-    public void resize(int r){}
+    public void resize(){
+        disp = imageObjet.getScaledInstance(2*rZoom,2*rZoom, Image.SCALE_SMOOTH);
+    }
+
+
+    public String getType() {
+        return "sun";
+    }
 }

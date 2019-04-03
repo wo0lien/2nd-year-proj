@@ -49,4 +49,9 @@ public class Planete extends ObjetCeleste{
     public void resize(){
         disp = imageObjet.getScaledInstance(2*rZoom,2*rZoom, Image.SCALE_SMOOTH);
     }
+
+
+    public String getType() {
+        return "planet";
+    }
 }

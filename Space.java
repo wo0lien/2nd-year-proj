@@ -56,20 +56,21 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private BufferedImage monBuf; // buffer d’affichage
     private Image spaceStars;
     private Image planetImage;
+    private Image sunImage;
     private Image resizedPlanet;
+    private Image resizedSun;
 
     //explosion
     private Image explosion, resizedExplosion; 
     private int explosionX, explosionY, explosionCounter, explosionR;
     private boolean explosing;
 
-    private boolean frags;
-
     //objects
 
     private LinkedList<ObjetCeleste> objets; 
-    private LinkedList<ObjetCeleste> fragments;
     private int size;
+
+    private Soleil sun;
 
     public Space(int xPos, int yPos, int x, int y,int bx, int by, int ax, int ay) {
 
@@ -104,10 +105,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
             File pathToSpace = new File("space_with_stars.png");
             File pathToPlanet = new File("earth.png");
+            File pathToSun = new File("sun.png");
             
             //transformation en objet image des fichier    
             spaceStars = ImageIO.read(pathToSpace);
             planetImage = ImageIO.read(pathToPlanet);
+            sunImage = ImageIO.read(pathToSun);
         
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,15 +126,22 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
 
         objets = new LinkedList<ObjetCeleste>();
-        fragments = new LinkedList<ObjetCeleste>();
-
-        frags = false;
 
         // ajout des listeners
 
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
+
+        //ajout du soleil au milieu de la fenetre
+
+        int SunDiam = 100;
+
+        resizedSun = sunImage.getScaledInstance(SunDiam, SunDiam, Image.SCALE_FAST);
+        HUD h = new HUD();
+
+        sun = new Soleil(100000, 400, 400, resizedSun, SunDiam / 2, h);
+        objets.add(sun);
 
         repaint();
 
@@ -157,65 +167,32 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                             objet.vx += Force * Math.cos(angle);
                             objet.vy += Force * Math.sin(angle);
 
-                            //difference de vitesse entre les 2 astres
-                            double deltaV = Math.abs(objet.vx - obj.vx) + Math.abs(objet.vy - obj.vy);
                             //préparation de la collision
                             
-                            if (Math.sqrt(r) < objet.r + obj.r && obj.masse < objet.masse){
-                                //si elles vont vite l'une par rapport a l'autreS
-                                if (deltaV > 500) {
-                                    //explosion en petits sattelites
-                                    System.out.println("Explosionnn");
-
-                                    //généation des satellites
-                                    double n = 0;
-                                    int max = (int)(Math.random() * 6) + 5;
-                                    double m = (objet.GetMasse() + obj.GetMasse()) / max;
-                                    int ray = (objet.r + obj.r) / max;
-                                    int ax = (obj.GetX() + objet.GetX()) / 2;
-                                    int ay = (obj.GetY() + objet.GetY()) / 2;
-
-                                    Image im = planetImage.getScaledInstance(ray * 2, ray * 2, Image.SCALE_FAST);
-
+                            if (Math.sqrt(r) < objet.r + obj.r){
+                                
+                                if (obj.masse < objet.masse || objet.getType() == "sun") {
                                     
-                                    for (int i = 0; i < max; i++) {
-
-                                        double vitx = 30 * Math.cos(n);
-                                        double vity = 30 * Math.sin(n);
-
-                                        System.out.println("masse " + m + " vitx " + vitx + " vity " + vity + " ax " + ax + " ay " + ay + " ray " + ray);
-
-                                        HUD hud = new HUD(bx,by,ax,ay);
-                                        Planete pl = new Planete(m, vitx, vity, ax + (int)(vitx * 3), ay + (int)(vity * 3), im, ray,hud);
-
-                                        fragments.push(pl);
-                                        //on veut des satellites dans toutes les directions
-                                        n += 6.28 / max;
+                                    if (objet.getType() != "sun") {
+                                        objet.r += obj.r;
+                                        objet.masse += obj.masse;
                                     }
-
-                                    frags = true;
-
-                                    objets.remove(obj);
-
-                                } else {
-                                    objet.r += obj.r;
-                                    objet.masse += obj.masse;
-                                    
+                                        
                                     //animation de l'explosion
-    
+        
                                     explosionX = obj.GetX();
                                     explosionY = obj.GetY();
                                     explosionCounter = 0;
-    
+        
                                     explosionR = obj.r;
-                                    
+                                        
                                     //resize Image
                                     resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
-    
+        
                                     //active l'affichage
                                     explosing = true;
-    
-                                    //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
+        
+                                        //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
                                     if (objSelected==obj) {
                                         objSelected=objet;
                                     }
@@ -223,34 +200,18 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                                     //on supprime l'objet 
                                     objets.remove(obj);
                                     objet.resize();
-                                    
                                 }
                             }
                         }
                     }
-                    if (!frags) {
-                        objet.update(dt);
-                    } else {
-                        objets.remove(objet);
-                        System.out.println("remove");
-                    }
-                }  
+                    objet.update(dt);
+                }
                 tempsJours++;
                 if (tempsJours==365) {
                     tempsJours=0;
                     tempsAnnées++;
                 }
             }
-            
-            if (frags) {
-                frags = false;
-                for (ObjetCeleste fragm : fragments) {
-                    System.out.println("pushed");
-                    objets.push(fragm);
-                }
-                fragments.clear();
-            }
-
             repaint();
     }
 
@@ -258,6 +219,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
      * Methode pour entrer dans le mode de création d'une planete
      */
     public void NewPlanet() {
+
         System.out.println("Passage en mode ajout de planete");
 
         //reinitialisation des variables necessaires
@@ -265,6 +227,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         newPlanetRadius = 20;
         newPlanetX = 0;
         newPlanetY = 0;
+
         resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_SMOOTH);
 
         mode = 1;
@@ -369,6 +332,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        System.out.println("Drag");
     }
 
     @Override
