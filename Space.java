@@ -68,6 +68,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     //objects
 
     private LinkedList<ObjetCeleste> objets; 
+    private LinkedList<ObjetCeleste> objetsTrajectoire;
     private int size;
 
     private Soleil sun;
@@ -151,61 +152,10 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             // si l'animation tourne on peut update la position des planetes
 
             if (!pause) {
-                for (ObjetCeleste objet : objets) {
-                    double Force, angle, r;
-                    int dx, dy;
-                    for (ObjetCeleste obj : objets) {
-                        // int Distx;
-                        // int Disty;
-                        dx = obj.GetX() - objet.GetX();
-                        dy = obj.GetY() - objet.GetY();
-                        r = dx * dx + dy * dy;
-                        if (r != 0) {
+                //appel de la fonction pour toutes les interractions 
+                interractions();
 
-                            Force = obj.GetMasse() / r;
-                            angle = Math.atan2(dy, dx);
-                            objet.vx += Force * Math.cos(angle);
-                            objet.vy += Force * Math.sin(angle);
 
-                            //préparation de la collision
-                            
-                            if (Math.sqrt(r) < objet.r + obj.r){
-                                
-                                if (obj.masse < objet.masse || objet.getType() == "sun") {
-                                    
-                                    if (objet.getType() != "sun") {
-                                        objet.r += obj.r;
-                                        objet.masse += obj.masse;
-                                    }
-                                        
-                                    //animation de l'explosion
-        
-                                    explosionX = obj.GetX();
-                                    explosionY = obj.GetY();
-                                    explosionCounter = 0;
-        
-                                    explosionR = obj.r;
-                                        
-                                    //resize Image
-                                    resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
-        
-                                    //active l'affichage
-                                    explosing = true;
-        
-                                        //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
-                                    if (objSelected==obj) {
-                                        objSelected=objet;
-                                    }
-
-                                    //on supprime l'objet 
-                                    objets.remove(obj);
-                                    objet.resize();
-                                }
-                            }
-                        }
-                    }
-                    objet.update(dt);
-                }
                 tempsJours++;
                 if (tempsJours==365) {
                     tempsJours=0;
@@ -501,5 +451,70 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         ppprevZoom=pprevZoom;
         pprevZoom=prevZoom;
         prevZoom=zoomFactor;
+    }
+    public void interractions() {
+        for (ObjetCeleste objet : objets) {
+            double Force, angle, r;
+            int dx, dy;
+            for (ObjetCeleste obj : objets) {
+                // int Distx;
+                // int Disty;
+                dx = obj.GetX() - objet.GetX();
+                dy = obj.GetY() - objet.GetY();
+                r = dx * dx + dy * dy;
+                if (r != 0) {
+
+                    Force = obj.GetMasse() / r;
+                    angle = Math.atan2(dy, dx);
+                    objet.vx += Force * Math.cos(angle);
+                    objet.vy += Force * Math.sin(angle);
+
+                    //préparation de la collision
+                    
+                    if (Math.sqrt(r) < objet.r + obj.r){
+                        
+                        if (obj.masse < objet.masse || objet.getType() == "sun") {
+                            
+                            if (objet.getType() != "sun") {
+                                objet.r += obj.r;
+                                objet.masse += obj.masse;
+                            }
+                                
+                            //animation de l'explosion
+
+                            explosionX = obj.GetX();
+                            explosionY = obj.GetY();
+                            explosionCounter = 0;
+
+                            explosionR = obj.r;
+                                
+                            //resize Image
+                            resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
+
+                            //active l'affichage
+                            explosing = true;
+
+                                //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
+                            if (objSelected==obj) {
+                                objSelected=objet;
+                            }
+
+                            //on supprime l'objet 
+                            objets.remove(obj);
+                            objet.resize();
+                        }
+                    }
+                }
+            }
+            objet.update(dt);
+        }
+    }
+    /**
+     * Methode pour calculer la trajectoire d'un objet
+     * @param obj l'objet dont on calcule les trajectoires
+     */
+    public void calculTraject(ObjetCeleste obj) {
+        objetsTrajectoire = objets;
+        objetsTrajectoire.add(obj);
     }
 }
