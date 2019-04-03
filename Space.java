@@ -53,20 +53,21 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private BufferedImage monBuf; // buffer d’affichage
     private Image spaceStars;
     private Image planetImage;
+    private Image sunImage;
     private Image resizedPlanet;
+    private Image resizedSun;
 
     //explosion
     private Image explosion, resizedExplosion; 
     private int explosionX, explosionY, explosionCounter, explosionR;
     private boolean explosing;
 
-    private boolean frags;
-
     //objects
 
     private LinkedList<ObjetCeleste> objets; 
-    private LinkedList<ObjetCeleste> fragments;
     private int size;
+
+    private Soleil sun;
 
     public Space(int xPos, int yPos, int x, int y,int bx, int by, int ax, int ay) {
 
@@ -101,10 +102,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
             File pathToSpace = new File("space_with_stars.png");
             File pathToPlanet = new File("earth.png");
+            File pathToSun = new File("sun.png");
             
             //transformation en objet image des fichier    
             spaceStars = ImageIO.read(pathToSpace);
             planetImage = ImageIO.read(pathToPlanet);
+            sunImage = ImageIO.read(pathToSun);
         
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,6 +129,16 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
+
+        //ajout du soleil au milieu de la fenetre
+
+        int SunDiam = 100;
+
+        resizedSun = sunImage.getScaledInstance(SunDiam, SunDiam, Image.SCALE_FAST);
+        HUD h = new HUD();
+
+        sun = new Soleil(100000, 400, 400, resizedSun, SunDiam / 2, h);
+        objets.add(sun);
 
         repaint();
 
@@ -153,33 +166,38 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
                             //préparation de la collision
                             
-                            if (Math.sqrt(r) < objet.r + obj.r && obj.masse < objet.masse){
+                            if (Math.sqrt(r) < objet.r + obj.r){
+                                
+                                if (obj.masse < objet.masse || objet.getType() == "sun") {
+                                    
+                                    if (objet.getType() != "sun") {
+                                        objet.r += obj.r;
+                                        objet.masse += obj.masse;
+                                    }
+                                        
+                                    //animation de l'explosion
+        
+                                    explosionX = obj.GetX();
+                                    explosionY = obj.GetY();
+                                    explosionCounter = 0;
+        
+                                    explosionR = obj.r;
+                                        
+                                    //resize Image
+                                    resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
+        
+                                    //active l'affichage
+                                    explosing = true;
+        
+                                        //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
+                                    if (objSelected==obj) {
+                                        objSelected=objet;
+                                    }
 
-                                objet.r += obj.r;
-                                objet.masse += obj.masse;
-                                    
-                                //animation de l'explosion
-    
-                                explosionX = obj.GetX();
-                                explosionY = obj.GetY();
-                                explosionCounter = 0;
-    
-                                explosionR = obj.r;
-                                    
-                                //resize Image
-                                resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
-    
-                                //active l'affichage
-                                explosing = true;
-    
-                                    //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
-                                if (objSelected==obj) {
-                                    objSelected=objet;
+                                    //on supprime l'objet 
+                                    objets.remove(obj);
+                                    objet.resize();
                                 }
-
-                                //on supprime l'objet 
-                                objets.remove(obj);
-                                objet.resize();
                             }
                         }
                     }
@@ -198,6 +216,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
      * Methode pour entrer dans le mode de création d'une planete
      */
     public void NewPlanet() {
+
         System.out.println("Passage en mode ajout de planete");
 
         //reinitialisation des variables necessaires
@@ -205,6 +224,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         newPlanetRadius = 20;
         newPlanetX = 0;
         newPlanetY = 0;
+
         resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_SMOOTH);
 
         mode = 1;
@@ -306,6 +326,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        System.out.println("Drag");
     }
 
     @Override
