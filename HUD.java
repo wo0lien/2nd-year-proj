@@ -8,7 +8,8 @@ import javax.swing.JPanel;
 
 public class HUD extends JPanel {
 
-    String planetName;
+    String objectName;
+    String typeObj;
 
     //variables Louise
 
@@ -38,17 +39,18 @@ public class HUD extends JPanel {
         w = this.getWidth();
     }
 
-    public HUD(int x, int y, int ax, int ay) {
+    public HUD(int x, int y, int ax, int ay, String name) {
 
         String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                 "t", "u", "v", "w", "x", "y", "z" };
 
-        planetName = c[(int) (Math.random() * 26)].toUpperCase() + c[(int) (Math.random() * 26)].toUpperCase()
+        objectName = c[(int) (Math.random() * 26)].toUpperCase() + c[(int) (Math.random() * 26)].toUpperCase()
                 + "-" + ((int) (Math.random() * 9999)) + "-" + c[(int) (Math.random() * 26)].toUpperCase()
                 + c[(int) (Math.random() * 26)].toUpperCase();
 
         this.setBounds(x, y, ax, ay);
         this.setBackground(Color.black);
+        typeObj=name;
 
        /* temp = new JLabel();
         temp.setBounds(20, 140, 200, 25);
@@ -117,28 +119,30 @@ public class HUD extends JPanel {
         g.drawRect(20, 20, w - 40, h - 40);
         Font F = new Font("F", 1, 20);
         g.setFont(F);
-        g.drawString("Nom de la Planète : ", 40, 100);
-        g.drawString(planetName, 40, 130);
-        g.drawString("Températures :", 40, 280);
-        g.drawString("Elements Chimiques :", 40, 440);
-        Font G = new Font("G", 1, 15);
-        g.setFont(G);
-        g.drawString("Distance au Soleil : ", 40, _200);
-        g.drawString("val" + " km", 200, _200);
-        g.drawString("moyenne :", 50,320 );
-        g.drawString("min :", 50,360 );
-        g.drawString("max :", 50,400 );
-        g.setColor(Color.GREEN);
-        g.drawString("val" + " °C", 200,320 );
-        g.setColor(Color.LIGHT_GRAY);
-        g.drawString("val" + " °C", 200,360 );
-        g.setColor(Color.RED);
-        g.drawString("val" + " °C", 200,400 );
-        g.setColor(Color.WHITE);
-        g.drawString("Azote", 40,480 );
-        g.drawString("Carbone", 40,520 );
-        g.drawString("Oxygène", 40,560 );
-        g.drawString("Hydrogène", 40,600 );
+        g.drawString("Nom de " + typeObj + " : ", 40, 100);
+        g.drawString(objectName, 40, 130);
+        if (typeObj.equals("la planète")) {
+            g.drawString("Températures :", 40, 280);
+            g.drawString("Elements Chimiques :", 40, 440);
+            Font G = new Font("G", 1, 15);
+            g.setFont(G);
+            g.drawString("Distance au Soleil : ", 40, _200);
+            g.drawString("val" + " km", 200, _200);
+            g.drawString("moyenne :", 50,320 );
+            g.drawString("min :", 50,360 );
+            g.drawString("max :", 50,400 );
+            g.setColor(Color.GREEN);
+            g.drawString("val" + " °C", 200,320 );
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawString("val" + " °C", 200,360 );
+            g.setColor(Color.RED);
+            g.drawString("val" + " °C", 200,400 );
+            g.setColor(Color.WHITE);
+            g.drawString("Azote", 40,480 );
+            g.drawString("Carbone", 40,520 );
+            g.drawString("Oxygène", 40,560 );
+            g.drawString("Hydrogène", 40,600 );
+        }
 
     
 
