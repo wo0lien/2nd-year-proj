@@ -13,7 +13,7 @@ public abstract class ObjetCeleste {
     protected int x, y;
     protected Image disp;
     protected Image imageObjet;
-    protected int temp;
+    protected double temp;
     protected HUD hud;
     protected double zoomCoeff;
     protected int rZoom;
@@ -30,6 +30,7 @@ public abstract class ObjetCeleste {
         vy = vity;
         r = rayon;
         zoomCoeff=1;
+        temp = 0;
         rZoom=r;
         this.hud=hud;
 
@@ -79,8 +80,28 @@ public abstract class ObjetCeleste {
         return this.masse;
     }
 
+    public double GetVx() {
+        return vx;
+    }
+
+    public double GetVy() {
+        return vy;
+    }
+
+    public int GetR() {
+        return r;
+    }
+
     public HUD getHUD() {
         return hud;
+    }
+
+    public double GetTemp() {
+        return temp;
+    }
+
+    public void SetTemp(double t) {
+        temp = t;
     }
     public void zoomUpdate(double zoom,double mouseX, double mouseY) {
         zoomCoeff=zoom;

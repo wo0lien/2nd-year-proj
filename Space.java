@@ -69,9 +69,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     private LinkedList<ObjetCeleste> objets; 
     private LinkedList<ObjetCeleste> objetsTrajectoire;
+    private LinkedList<ObjetCeleste> objetsDetruits;
+    private LinkedList<ObjetCeleste> objetsDestructeurs;
     private int size;
 
     private Soleil sun;
+    private double coefTemp;
 
     public Space(int xPos, int yPos, int x, int y,int bx, int by, int ax, int ay) {
 
@@ -127,6 +130,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
 
         objets = new LinkedList<ObjetCeleste>();
+        objetsTrajectoire = new LinkedList<ObjetCeleste>();
+        objetsDetruits = new LinkedList<ObjetCeleste>();
+        objetsDestructeurs = new LinkedList<ObjetCeleste>();
 
         // ajout des listeners
 
@@ -144,6 +150,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         sun = new Soleil(100000, 400, 400, resizedSun, SunDiam / 2, h);
         objets.add(sun);
 
+        coefTemp = 100;
+
         repaint();
 
     }
@@ -153,13 +161,25 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
             if (!pause) {
                 //appel de la fonction pour toutes les interractions 
-                interractions();
+                interractions(objets, false);
 
-
+                //incrémentation du timer
                 tempsJours++;
                 if (tempsJours==365) {
                     tempsJours=0;
                     tempsAnnées++;
+                }
+
+                //setup les variables de températures 
+
+                for (ObjetCeleste obj : objets) {
+
+                    //distance au soleil
+                    if (obj.getType() != "sun") {
+                        int dist = (int)Math.pow(2, Math.abs((double)(sun.GetX() - obj.GetX())) + Math.abs((double)(sun.GetY() - obj.GetY())));
+                        obj.SetTemp(sun.GetTemp() / dist * coefTemp);
+                        System.out.println(obj.GetTemp());
+                    }
                 }
             }
             repaint();
@@ -200,6 +220,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void paint(Graphics g) {
 
         Prepaint(monBuf.getGraphics());
+
         g.drawImage(monBuf, getInsets().left, getInsets().top, null);
 
     }
@@ -208,6 +229,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
      * Méthode pour précharger l'affichage et éviter les scintillements
      */
     public void Prepaint(Graphics g) {
+        
         // draw background image
 
         g.drawImage(spaceStars, 0, 0, null);
@@ -247,9 +269,16 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             }
             break;
         case 3:
+
+            //affichage de la trajectoire la nouvelle planete
             if (mouseIn) {
-                g.setColor(Color.red);
-                g.drawLine(newPlanetX, newPlanetY, mouseX, mouseY);
+
+                copie();
+
+                objetsTrajectoire.getLast().setVitesseX((double)mouseX - newPlanetX);
+                objetsTrajectoire.getLast().setVitesseY((double)mouseY - newPlanetY);
+
+                calculTraject(objetsTrajectoire.getLast() , g);
             }
             break;
         default:
@@ -300,7 +329,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 break;
             case 2:
                 //mode fixage de la taille de la planete
-                newPlanetRadius = (int)Math.sqrt(Math.pow(mouseX - newPlanetX, 2) + Math.pow(mouseY - newPlanetY, 2));
+                newPlanetRadius = Math.max((int)Math.sqrt(Math.pow(mouseX - newPlanetX, 2) + Math.pow(mouseY - newPlanetY, 2)), 1);
 
                 //mise a l'echelle de la planete
                 resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
@@ -346,9 +375,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 2:
                     //sauvegarde de la planete dans la liste des objets
                     //remplacer le 2 par un coef en fonction des materiaux
-                    HUD hud= new HUD(bx,by,ax,ay);
+                    HUD hud= new HUD(bx, by, ax, ay);
                     Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud);
                     objets.add(newp);
+
+                    copie();
 
                     //repassage en mode 3
                     System.out.println("Passage au mode selection vitesse");
@@ -376,10 +407,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     public void cancelPLanet() {
         System.out.println("annulation du placement de la planète");
-            mode=0;
-            if (size!=objets.size()){
+            
+            if (mode != 0){
                 objets.removeLast();
+                mode=0;
             }
+            
     }
 
     @Override
@@ -402,8 +435,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     public void mouseWheelMoved(MouseWheelEvent e){ //gère le zoom
         if (e.getWheelRotation()<0) {
-            zoomFactor*=1.1;
-            zoomFactor=Math.min(10.0,zoomFactor);  
+            zoomFactor *= 1.1;
+            zoomFactor = Math.min(10.0, zoomFactor);  
             testRotation();
             if (zoomFactor<10 && rotation==1) {
                 zoom();
@@ -452,20 +485,25 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         pprevZoom=prevZoom;
         prevZoom=zoomFactor;
     }
-    public void interractions() {
-        for (ObjetCeleste objet : objets) {
+    public void interractions(LinkedList<ObjetCeleste> listeObj, boolean traj) {
+
+        objetsDetruits.clear();
+        objetsDestructeurs.clear();
+        
+        for (ObjetCeleste objet : listeObj) {
             double Force, angle, r;
-            int dx, dy;
-            for (ObjetCeleste obj : objets) {
+            double dx, dy;
+            
+            for (ObjetCeleste obj : listeObj) {
                 // int Distx;
                 // int Disty;
-                dx = obj.GetX() - objet.GetX();
-                dy = obj.GetY() - objet.GetY();
+                dx = (double)(obj.GetX() - objet.GetX());
+                dy = (double)(obj.GetY() - objet.GetY());
                 r = dx * dx + dy * dy;
                 if (r != 0) {
 
                     Force = obj.GetMasse() / r;
-                    angle = Math.atan2(dy, dx);
+                    angle = Math.atan2((double)dy, (double)dx);
                     objet.vx += Force * Math.cos(angle);
                     objet.vy += Force * Math.sin(angle);
 
@@ -475,46 +513,103 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         
                         if (obj.masse < objet.masse || objet.getType() == "sun") {
                             
-                            if (objet.getType() != "sun") {
-                                objet.r += obj.r;
-                                objet.masse += obj.masse;
-                            }
-                                
-                            //animation de l'explosion
-
-                            explosionX = obj.GetX();
-                            explosionY = obj.GetY();
-                            explosionCounter = 0;
-
-                            explosionR = obj.r;
-                                
-                            //resize Image
-                            resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
-
-                            //active l'affichage
-                            explosing = true;
-
-                                //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
-                            if (objSelected==obj) {
-                                objSelected=objet;
-                            }
-
-                            //on supprime l'objet 
-                            objets.remove(obj);
-                            objet.resize();
+                            objetsDestructeurs.add(objet);
+                            objetsDetruits.add(obj);
                         }
                     }
                 }
             }
             objet.update(dt);
         }
+
+        //on s'occupe des destructions
+
+        while(objetsDestructeurs.size() > 0) {
+
+            ObjetCeleste objet = objetsDestructeurs.getLast();
+            ObjetCeleste obj = objetsDetruits.getLast();
+
+            if (objet.getType() != "sun") {
+                objet.r += obj.r * 0.3; //on augmente la taille
+                objet.masse += obj.masse;
+            }
+                
+            //animation de l'explosion
+
+            explosionX = obj.GetX();
+            explosionY = obj.GetY();
+            explosionCounter = 0;
+
+            explosionR = obj.r;
+                
+            //resize Image
+            resizedExplosion = explosion.getScaledInstance(explosionR * 2, explosionR * 2, Image.SCALE_FAST);
+
+            //active l'affichage
+            if (!traj) {
+                explosing = true;
+            }
+            
+                //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
+            if (objSelected==obj) {
+                objSelected=objet;
+            }
+
+            //on supprime l'objet 
+            listeObj.remove(obj);
+            objet.resize();
+
+            objetsDetruits.remove(obj);
+            objetsDestructeurs.remove(objet);
+        }
+    }
+    /**
+     * Créer une copie de la linkedList avec des objets fictifs
+     * @param in
+     * @param out
+     */
+    public void copie() {
+        
+        if (objetsTrajectoire.size() != 0) {
+            objetsTrajectoire.clear();
+        }
+        for (ObjetCeleste obj : objets) {
+
+            //on clone et on ajoute les éléments
+            if (obj.getType() == "planet") {
+                Planete np = new Planete(obj.GetMasse(), obj.GetVx(), obj.GetVy(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD());
+                objetsTrajectoire.add(np);
+            } else {
+                Soleil ns = new Soleil(obj.GetMasse(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD());
+                objetsTrajectoire.add(ns);
+            }
+        }
     }
     /**
      * Methode pour calculer la trajectoire d'un objet
      * @param obj l'objet dont on calcule les trajectoires
      */
-    public void calculTraject(ObjetCeleste obj) {
-        objetsTrajectoire = objets;
-        objetsTrajectoire.add(obj);
+    public void calculTraject(ObjetCeleste obj, Graphics g) {
+
+        int rad = 2;
+
+        //on pose des points sur les 20 prochaines itérations
+        for (int i = 0; i < 200; i++) {
+
+            //on check si l'objet n'a pas explosé
+
+            if (objetsTrajectoire.contains(obj)) {
+                
+                //interractions entre les objets de la liste factice
+
+                interractions(objetsTrajectoire, true);
+
+                //affichage
+                if (i%2 == 0) {
+                    g.setColor(Color.red);
+                    g.fillOval(obj.GetX() - rad, obj.GetY() - rad, 2 * rad, 2 * rad);
+                }
+            }
+        }
     }
 }
