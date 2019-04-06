@@ -95,23 +95,12 @@ public abstract class ObjetCeleste {
     public HUD getHUD() {
         return hud;
     }
-
-    public double GetTemp() {
-        return temp;
-    }
-
-    public void SetTemp(double t) {
-        temp = t;
-    }
-    public void zoomUpdate(double zoom,double mouseX, double mouseY) {
-        zoomCoeff=zoom;
-        xZ = (int)(mouseX-(mouseX-x)*zoomCoeff);
-        yZ = (int)(mouseY-(mouseY-y)*zoomCoeff);
-        rZoom=(int)(r*zoomCoeff);
+    public void zoomUpdate(double zoom,double xOffset, double yOffset) {
+        xZ = (int)(-(xOffset-x)*zoom);
+        yZ = (int)(-(yOffset-y)*zoom);
+        rZoom=(int)(r*zoom);
     }
     public void zoomUpdate() {
-        xZ=(int)(x*zoomCoeff);
-        yZ=(int)(y*zoomCoeff);
     }
     public abstract void setVitesseX(double vx);
 

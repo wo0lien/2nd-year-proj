@@ -24,8 +24,10 @@ public class Planete extends ObjetCeleste{
         
         //afficahge de trajectoire
 
-        g.setColor(Color.red);
+        g.setColor(Color.RED);
         g.drawImage(disp, this.xZ - disp.getWidth(null) / 2, this.yZ - disp.getHeight(null) / 2, null);
+        //g.drawString("x " + x + " y " + y,xZ,yZ);
+        //g.drawString("xZ " + xZ + " yZ " + yZ,xZ,yZ+15);
     }
 
     @Override
@@ -42,7 +44,6 @@ public class Planete extends ObjetCeleste{
     public void update(int dt) {
         this.x += dt * vx / 1000;
         this.y += dt * vy / 1000;
-        super.zoomUpdate();
     }
 
     @Override

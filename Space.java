@@ -35,10 +35,13 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private double pprevZoom;
     private double ppprevZoom;
     private int rotation; //0 no rotation, 1 zoom in, -1 zoom out
+    private double zoomR;
+    private double prevZoomR;
+    private int tempsZoom;
     private double xOffset; //coordonnées d'un point 'fixe'
     private double yOffset;
-    private double xxOffset;
-    private double yyOffset;
+    private double mouseXReel;
+    private double mouseYReel;
 
     //hud courant pour pouvoir l'afficher dans la fenetre
     private HUD hudCourant;
@@ -51,6 +54,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private boolean mouseIn = false;
     private int mouseX = 0, mouseY = 0;
     private int newPlanetX =  0, newPlanetY = 0, newPlanetRadius = 20;
+    private int newPlanetXReel =0 , newPlanetYReel=0;
 
     // Image pour l'affichage sans scintillements
     private BufferedImage monBuf; // buffer d’affichage
@@ -95,8 +99,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         Dimension dim = getSize();
 
-        xOffset=dim.width/2;
-        yOffset=dim.height/2;
+        xOffset=0;
+        yOffset=0;
+        zoomR=0;
 
         // buffered image
         monBuf = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
@@ -145,12 +150,13 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         int SunDiam = 100;
 
         resizedSun = sunImage.getScaledInstance(SunDiam, SunDiam, Image.SCALE_FAST);
-        HUD h = new HUD();
+        HUD h = new HUD(bx,by,ax,ay,"l'étoile");
 
         sun = new Soleil(100000, 400, 400, resizedSun, SunDiam / 2, h);
         objets.add(sun);
 
         coefTemp = 100;
+        size=objets.size();
 
         repaint();
 
@@ -195,8 +201,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         //reinitialisation des variables necessaires
 
         newPlanetRadius = 20;
-        newPlanetX = 0;
-        newPlanetY = 0;
 
         resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_SMOOTH);
 
@@ -233,13 +237,17 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         // draw background image
 
         g.drawImage(spaceStars, 0, 0, null);
+
+        updateMouseOffset();
+        updateOffset();
         
+        g.setColor(Color.GREEN);
+        //g.drawString("xZ " + (int)mouseXReel + " yZ " + (int)mouseYReel,mouseX,mouseY);
+        //g.drawString("x " + mouseX + " y " + mouseY,mouseX,mouseY+15);
+       // g.drawString("xOffset :" + (int)xOffset + " yOffset : " + (int)yOffset,10,10);
         //affichage de la liste des objets
 
         for (ObjetCeleste obj : objets) {
-            if (rotation==0) {
-                obj.zoomUpdate(zoomFactor, xxOffset, yOffset);
-            } 
             obj.paint(g);
         }
 
@@ -250,8 +258,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         }
 
         // prise en compte du mode
-        String str = "xOffset : " +xxOffset + " yOffset : " + yyOffset;
-        g.drawString(str,mouseX,mouseY);
         switch (mode) {
         case 0:
             // affichage classique de l'animation
@@ -265,14 +271,14 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         case 2:
             //position de la nouvelle planete fixee => fixage de la taille
             if (mouseIn) {
-                g.drawImage(resizedPlanet , newPlanetX - newPlanetRadius, newPlanetY - newPlanetRadius, null);
+                g.drawImage(resizedPlanet , newPlanetXReel - newPlanetRadius, newPlanetYReel - newPlanetRadius, null);
             }
             break;
         case 3:
 
             //affichage de la trajectoire la nouvelle planete
             if (mouseIn) {
-
+                
                 copie();
 
                 objetsTrajectoire.getLast().setVitesseX((double)mouseX - newPlanetX);
@@ -280,10 +286,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
                 calculTraject(objetsTrajectoire.getLast() , g);
             }
-            break;
-        default:
-            break;
-        }
 
         //explosion
         if (explosionCounter > 25){
@@ -329,7 +331,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 break;
             case 2:
                 //mode fixage de la taille de la planete
-                newPlanetRadius = Math.max((int)Math.sqrt(Math.pow(mouseX - newPlanetX, 2) + Math.pow(mouseY - newPlanetY, 2)), 1);
+                newPlanetRadius = (int)Math.sqrt(Math.pow((int)mouseXReel - newPlanetX, 2) + Math.pow((int)mouseYReel - newPlanetY, 2));
 
                 //mise a l'echelle de la planete
                 resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
@@ -351,10 +353,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 0:
                     //chose qui se passe quand le jeu est en mode normal
                     // clicker sur une planete pour afficher son hud
-                    //implémentation du zoom : penser à prendre l'offset en compte
                     for (ObjetCeleste obj : objets) {
-                        double dx = obj.GetX() - (int)(e.getX());
-                        double dy = obj.GetY() - (int)(e.getY());
+                        double dx = obj.GetX() - (int)mouseXReel;
+                        double dy = obj.GetY() - (int)mouseYReel;
                         double r = Math.sqrt(dx * dx + dy * dy);
                         if (r < obj.r) {
                             System.out.println("j'affiche le hud");
@@ -365,8 +366,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     break;
                 case 1:
                     //fixage de la position de la nouvelle planete
-                    newPlanetX = e.getX();
-                    newPlanetY = e.getY();
+                    newPlanetX = (int)mouseXReel;
+                    newPlanetY = (int)mouseYReel;
+                    updateNewPlanetOffset();
                     //passage au mode suivant
                     System.out.println("Passe au mode selection taille");
                     mode = 2;
@@ -375,8 +377,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 2:
                     //sauvegarde de la planete dans la liste des objets
                     //remplacer le 2 par un coef en fonction des materiaux
-                    HUD hud= new HUD(bx, by, ax, ay);
+                    HUD hud= new HUD(bx,by,ax,ay,"la planète");
                     Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud);
+                    newp.zoomUpdate(zoomFactor,xOffset,yOffset);
                     objets.add(newp);
 
                     copie();
@@ -389,12 +392,16 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
                     // on assigne a la planete la vitesse en x et en y en fonction de la position du curseur
 
-                    objets.get(objets.size() - 1).setVitesseX((double)e.getX() - newPlanetX);
-                    objets.get(objets.size() - 1).setVitesseY((double)e.getY() - newPlanetY);
+                    objets.get(objets.size() - 1).setVitesseX((double)mouseXReel - newPlanetX);
+                    objets.get(objets.size() - 1).setVitesseY((double)mouseYReel - newPlanetY);
                     
                     //retour au mode 0
 
                     mode = 0;
+                    newPlanetX=0;
+                    newPlanetY=0;
+                    newPlanetXReel=0;
+                    newPlanetYReel=0;
 
                     break;
                 default:
@@ -438,42 +445,53 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             zoomFactor *= 1.1;
             zoomFactor = Math.min(10.0, zoomFactor);  
             testRotation();
-            if (zoomFactor<10 && rotation==1) {
+            updateOffset();
+            updateMouseOffset();
+            //if (zoomFactor<10 && rotation==1) {
                 zoom();
-                repaint();
-            }        
+            //}  
+            rotation=0;      
             //scroll vers le haut
         } else {
             zoomFactor/=1.1;
             zoomFactor=Math.max(0.1,zoomFactor);
             testRotation();
-            if (zoomFactor>0.1 && rotation==-1) {
+            updateOffset();
+            updateMouseOffset();
+            //if (zoomFactor>0.1 && rotation==-1) {
                 zoom();
-                repaint();
-            } 
+            //} 
+            rotation=0;
             // scroll vers le bas
         }
-        rotation=0;
+        zoomR=Math.random();
     }
 
     public void zoom() {
          //implementation du zoom
         for (ObjetCeleste obj : objets) {
+            obj.zoomUpdate(zoomFactor,xOffset,yOffset);
             obj.resize();
-            obj.zoomUpdate(zoomFactor, mouseX, mouseY);
         }
-        //coordonnées du point central de l'écran
+        repaint();
     }
 
     //déterminer la position réelle de la sourie sur la map
     public void updateOffset() {
-        xxOffset=mouseX-(xOffset-mouseX)/zoomFactor;
-        yyOffset=yOffset-(yOffset-mouseY)/zoomFactor;
+        xOffset=mouseXReel-mouseX/zoomFactor;
+        yOffset=mouseYReel-mouseY/zoomFactor;
+    }
+    public void updateMouseOffset() {
+        mouseXReel=xOffset+mouseX/zoomFactor;
+        mouseYReel=yOffset+mouseY/zoomFactor;
+    }
+    public void updateNewPlanetOffset() {
+        newPlanetXReel = (int)(-(xOffset-newPlanetX)*zoomFactor);
+        newPlanetYReel = (int)(-(xOffset-newPlanetY)*zoomFactor);
     }
 
     //fluidifier le mouvement de la molette qui est parfois imprécis
     public void testRotation() {
-        updateOffset();
         if (zoomFactor>prevZoom && prevZoom>pprevZoom && pprevZoom>ppprevZoom) {
             rotation=1;
         } else if (zoomFactor<prevZoom && prevZoom<pprevZoom && pprevZoom<ppprevZoom) {
