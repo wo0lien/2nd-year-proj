@@ -42,6 +42,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private double yOffset;
     private double mouseXReel;
     private double mouseYReel;
+    private int startX=0,startY=0;
+    private double xDiff=0,yDiff=0;
 
     //hud courant pour pouvoir l'afficher dans la fenetre
     private HUD hudCourant;
@@ -274,10 +276,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         g.setColor(Color.GREEN);
         //g.drawString("xZ " + (int)mouseXReel + " yZ " + (int)mouseYReel,mouseX,mouseY);
         //g.drawString("x " + mouseX + " y " + mouseY,mouseX,mouseY+15);
-       // g.drawString("xOffset :" + (int)xOffset + " yOffset : " + (int)yOffset,10,10);
+        g.drawString("xOffset :" + (int)xOffset + " yOffset : " + (int)yOffset,10,10);
         //affichage de la liste des objets
 
         for (ObjetCeleste obj : objets) {
+            obj.zoomUpdate(zoomFactor,xOffset,yOffset);
             obj.paint(g);
         }
 
@@ -340,7 +343,14 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.println("Drag");
+        xDiff=(double)(startX-e.getX())/zoomFactor;
+        yDiff=(double)(startY-e.getY())/zoomFactor;
+        xOffset+=xDiff;
+        yOffset+=yDiff;
+        updateMouseOffset();
+        startX=e.getX();
+        startY=e.getY();
+        repaint();
     }
 
     @Override
@@ -385,7 +395,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         double dy = obj.GetY() - (int)mouseYReel;
                         double r = Math.sqrt(dx * dx + dy * dy);
                         if (r < obj.r) {
-                            System.out.println("j'affiche le hud");
                             hudCourant=obj.getHUD();
                             objSelected=obj;
                         }
@@ -447,10 +456,14 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mousePressed(MouseEvent e) {
+        startX=mouseX;
+        startY=mouseY;
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        xDiff=0;
+        yDiff=0;
     }
 
     @Override
