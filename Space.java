@@ -134,7 +134,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         //resize explosion
         resizedExplosion = explosion.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
-        resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
+        resizedPlanet = planetImage.getScaledInstance((int)(newPlanetRadius * 2 * zoomFactor), (int)(newPlanetRadius * 2 * zoomFactor), Image.SCALE_FAST);
 
         objets = new LinkedList<ObjetCeleste>();
         objetsTrajectoire = new LinkedList<ObjetCeleste>();
@@ -185,8 +185,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     //distance au soleil
                     if (obj.getType() != "sun") {
                         int dist = (int)Math.pow(2, Math.abs((double)(sun.GetX() - obj.GetX())) + Math.abs((double)(sun.GetY() - obj.GetY())));
-                        obj.SetTemp(sun.GetTemp() / dist * coefTemp);
-                        System.out.println(obj.GetTemp());
+                        /*obj.SetTemp(sun.GetTemp() / dist * coefTemp);
+                        System.out.println(obj.GetTemp());*/
                     }
                 }
             }
@@ -246,7 +246,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         g.setColor(Color.GREEN);
         //g.drawString("xZ " + (int)mouseXReel + " yZ " + (int)mouseYReel,mouseX,mouseY);
         //g.drawString("x " + mouseX + " y " + mouseY,mouseX,mouseY+15);
-        g.drawString("xOffset :" + (int)xOffset + " yOffset : " + (int)yOffset,10,10);
+        //g.drawString("xOffset :" + (int)xOffset + " yOffset : " + (int)yOffset,10,10);
         //affichage de la liste des objets
 
         for (ObjetCeleste obj : objets) {
@@ -274,7 +274,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         case 2:
             //position de la nouvelle planete fixee => fixage de la taille
             if (mouseIn) {
-                g.drawImage(resizedPlanet , newPlanetXReel - newPlanetRadius, newPlanetYReel - newPlanetRadius, null);
+                newPlanetXReel=updateSomeOffsetX(newPlanetX);
+                newPlanetYReel=updateSomeOffsetY(newPlanetY);
+                g.drawImage(resizedPlanet , newPlanetXReel - (int)(newPlanetRadius*zoomFactor), newPlanetYReel - (int)(newPlanetRadius*zoomFactor), null);
             }
             break;
         case 3:
@@ -289,7 +291,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
                 calculTraject(objetsTrajectoire.getLast() , g);
             }
-
+        }
         //explosion
         if (explosionCounter > 25){
             explosing = false;
@@ -297,7 +299,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         if (explosing) {
             explosionCounter++;
 
-            g.drawImage(resizedExplosion, explosionX - explosionR , explosionY - explosionR, null);
+            g.drawImage(resizedExplosion, updateSomeOffsetX(explosionX) - (int)(explosionR*zoomFactor) , updateSomeOffsetY(explosionY) - (int)(explosionR*zoomFactor), null);
 
         } 
     }
@@ -344,7 +346,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 newPlanetRadius = (int)Math.sqrt(Math.pow((int)mouseXReel - newPlanetX, 2) + Math.pow((int)mouseYReel - newPlanetY, 2));
 
                 //mise a l'echelle de la planete
-                resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
+                resizedPlanet = planetImage.getScaledInstance((int)(newPlanetRadius * 2 * zoomFactor), (int)(newPlanetRadius * 2 * zoomFactor), Image.SCALE_SMOOTH);
 
                 break;
             
@@ -377,7 +379,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
                     newPlanetY = (int)mouseYReel;
-                    updateNewPlanetOffset();
+                    newPlanetXReel=updateSomeOffsetX(newPlanetX);
+                    newPlanetYReel=updateSomeOffsetY(newPlanetY);
                     //passage au mode suivant
                     System.out.println("Passe au mode selection taille");
                     mode = 2;
@@ -460,10 +463,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             testRotation();
             updateOffset();
             updateMouseOffset();
-            //if (zoomFactor<10 && rotation==1) {
+            if (zoomFactor<10 && rotation==1) {
                 zoom();
-            //}  
-            rotation=0;      
+            }  
             //scroll vers le haut
         } else {
             zoomFactor/=1.1;
@@ -471,10 +473,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             testRotation();
             updateOffset();
             updateMouseOffset();
-            //if (zoomFactor>0.1 && rotation==-1) {
+            if (zoomFactor>0.1 && rotation==-1) {
                 zoom();
-            //} 
-            rotation=0;
+            } 
             // scroll vers le bas
         }
         zoomR=Math.random();
@@ -498,9 +499,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         mouseXReel=xOffset+mouseX/zoomFactor;
         mouseYReel=yOffset+mouseY/zoomFactor;
     }
-    public void updateNewPlanetOffset() {
-        newPlanetXReel = (int)(-(xOffset-newPlanetX)*zoomFactor);
-        newPlanetYReel = (int)(-(xOffset-newPlanetY)*zoomFactor);
+    public int updateSomeOffsetX(double xOff) {
+        return (int)(-(xOffset-xOff)*zoomFactor);
+    }
+    public int updateSomeOffsetY(double yOff) {
+        return (int)(-(yOffset-yOff)*zoomFactor);
     }
 
     //fluidifier le mouvement de la molette qui est parfois imprécis
@@ -638,7 +641,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 //affichage
                 if (i%2 == 0) {
                     g.setColor(Color.red);
-                    g.fillOval(obj.GetX() - rad, obj.GetY() - rad, 2 * rad, 2 * rad);
+                    g.fillOval(updateSomeOffsetX(obj.GetX()) - rad, updateSomeOffsetY(obj.GetY()) - rad, 2 * rad, 2 * rad);
                 }
             }
         }

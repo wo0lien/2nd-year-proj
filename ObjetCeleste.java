@@ -100,10 +100,6 @@ public abstract class ObjetCeleste {
         yZ = (int)(-(yOffset-y)*zoom);
         rZoom=(int)(r*zoom);
     }
-    public void dragUpdate(double xOffset,double yOffset) {
-        xZ-=xOffset;
-        yZ-=yOffset;
-    }
     public abstract void setVitesseX(double vx);
 
     public abstract void setVitesseY(double vy);
