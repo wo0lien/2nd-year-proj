@@ -286,8 +286,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 
                 copie();
 
-                objetsTrajectoire.getLast().setVitesseX((double)mouseX - newPlanetX);
-                objetsTrajectoire.getLast().setVitesseY((double)mouseY - newPlanetY);
+                objetsTrajectoire.getLast().setVitesseX((double)mouseXReel - newPlanetX);
+                objetsTrajectoire.getLast().setVitesseY((double)mouseYReel - newPlanetY);
 
                 calculTraject(objetsTrajectoire.getLast() , g);
             }
