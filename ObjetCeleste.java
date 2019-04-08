@@ -12,16 +12,32 @@ public abstract class ObjetCeleste {
     public int r;
     protected int x, y;
     protected Image disp;
-    protected int temp;
+    protected Image imageObjet;
+    protected double temp;
+    protected HUD hud;
+    protected double zoomCoeff;
+    protected int rZoom;
+    protected int xZ,yZ;
+    public String atome[] = new String [4];
 
-    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon) {
+
+    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon, HUD hud, String [] a) {
         masse = m;
         x = ax;
         y = ay;
+        xZ=x;
+        yZ=y;
         disp = i;
         vx = vitx;
         vy = vity;
         r = rayon;
+        zoomCoeff=1;
+        temp = 0;
+        rZoom=r;
+        this.hud=hud;
+        for (int j =0 ; j<atome.length ; j++ ) {
+            a[j] = atome[j];
+        }
 
 
         //bug : la linked list n'est pas dans le constructeur on ne peut pas y avoir acces depuis ici il faut faire en sort de créer la methode update dans space.java
@@ -69,9 +85,35 @@ public abstract class ObjetCeleste {
         return this.masse;
     }
 
+    public double GetVx() {
+        return vx;
+    }
+
+    public double GetVy() {
+        return vy;
+    }
+
+    public int GetR() {
+        return r;
+    }
+
+    public HUD getHUD() {
+        return hud;
+    }
+
+    public String [] getatome() {
+        return this.atome;
+    }
+    public void zoomUpdate(double zoom,double xOffset, double yOffset) {
+        xZ = (int)(-(xOffset-x)*zoom);
+        yZ = (int)(-(yOffset-y)*zoom);
+        rZoom=(int)(r*zoom);
+    }
     public abstract void setVitesseX(double vx);
 
     public abstract void setVitesseY(double vy);
 
-    private LinkedList<ObjetCeleste> objets;
+    public String getType() {
+        return "";
+    }
 }

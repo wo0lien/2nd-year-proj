@@ -11,14 +11,19 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
 
     //variables
 
-    private JPanel mainPanel, footerPanel;
+    private JPanel mainPanel, footerPanel, hud;
     private JButton newPlanet, timerButton;
+    private JTextArea timeCountJours, timeCountYears;
     private Space space;
+
+    //timer
+    Timer t;
+    private int dt = 40;
 
     public Fenetre(String nom) throws AWTException{
         super(nom);
 
-        this.setSize(1000, 850);
+        this.setSize(1400, 850);
 
         //Jpanel principal (content pane)
         mainPanel = new JPanel();
@@ -26,7 +31,7 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         mainPanel.setBackground(Color.black);
 
         //création du JPanel Space a la taille de la fenetre
-        space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+        space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150,this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
         mainPanel.add(space);
 
         //panel de bas de page
@@ -42,10 +47,23 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         timerButton = new JButton("Start animation");
         timerButton.setBounds(250, 20, 200, 60);
 
+        timeCountJours = new JTextArea("Jours : " + space.getTempsJours());
+        timeCountJours.setBounds(480,40,200,60);
+
+        timeCountYears = new JTextArea("Années : " + space.getTempsAnnées());
+        timeCountYears.setBounds(480,60,200,60);
+
         footerPanel.add(newPlanet);
         footerPanel.add(timerButton);
+        footerPanel.add(timeCountJours);
+        footerPanel.add(timeCountYears);
 
         mainPanel.add(footerPanel);
+
+        //side panel
+
+        hud = new HUD();
+        mainPanel.add(hud);
 
         //ajout du panel à la fenetre principale
         this.setContentPane(mainPanel);
@@ -58,6 +76,10 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         //affichage de la fenetre et arret a la fermeture
         this.setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //consutrction du timer
+        t = new Timer(dt, this);
+        t.start();
     }
 
 
@@ -68,11 +90,20 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
             space.NewPlanet();
         } else if (e.getSource() == timerButton){
             space.TimerButton();
+            space.cancelPLanet();
             if (timerButton.getText() == "Start animation") {
                 timerButton.setText("Stop animation");
             } else {
                 timerButton.setText("Start animation");
             }
+        } else if (e.getSource()==t) {
+            timeCountJours.setText("Jours : " + space.getTempsJours());
+            timeCountYears.setText("Années : " + space.getTempsAnnées());
+            space.timerPerformed();
+            hud=space.getHUD();
+            hud.repaint();
+            mainPanel.add(hud);
+
         }
     }
 
