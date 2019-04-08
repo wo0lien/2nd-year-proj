@@ -35,8 +35,8 @@ public abstract class ObjetCeleste {
         temp = 0;
         rZoom=r;
         this.hud=hud;
-        for (int j =0 ; j<atome.length ; j++ ) {
-            a[j] = atome[j];
+        for (int j =0 ; j<a.length ; j++ ) {
+            atome[j] = a[j];
         }
 
 

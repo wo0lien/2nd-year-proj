@@ -6,13 +6,13 @@ import javax.swing.*;
 import java.awt.AWTException;
 
 
-public class Fenetre extends JFrame implements ActionListener, KeyListener {
+public class Choix extends JFrame implements ActionListener, KeyListener {
 
    private JPanel pan;
 private JButton Azote, Carbone, Hydrogene, Oxygene;
 private JLabel Choix;
 
-public Fenetre(String nom) throws AWTException{
+public Choix (String ChoixComposition) throws AWTException{
     super("ChoixComposition");
 
     this.setSize(1400, 850);
@@ -42,23 +42,25 @@ public Fenetre(String nom) throws AWTException{
     Choix = new JLabel ("Choisis de quoi ta planète sera constituée !");
     Choix.setBounds(600, 600, 200, 50);
 
-    public void actionPerformed(ActionEvent e) {
+    pan.add(Oxygene);
+    pan.add(Azote);
+    pan.add(Carbone);
+    pan.add(Hydrogene);
+    pan.add(Choix);
+
+    public void actionPerformed (ActionEvent e) {
         //reaction aux clics sur les boutons
-        switch (e.getSource()) {
-            case Carbone :
+        if (e.getSource()== Oxygene) {
 
-            break;
+        }
+        else if (e.getSource() == Azote) {
 
-            case Hydrogene :
-            
-            break;
+        }
+        else if (e.getSource()== Carbone) {
 
-            case Oxygene :
-            
-            break;
-            
-            case Azote: 
-            break;
+        }
+        else if (e.getSource() == Hydrogene){
+
         }
     }
 }

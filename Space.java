@@ -266,6 +266,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             // affichage classique de l'animation
             break;
         case 1:
+            
             // affichage de la planete sur le curseur de l'utilisateur
             if (mouseIn) {
                 g.drawImage(resizedPlanet , mouseX - newPlanetRadius, mouseY - newPlanetRadius, null);
@@ -376,6 +377,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     }
                     break;
                 case 1:
+                    // Choix Atome
+                    new Choix atome = new Fenetre("Materiau Planete");
+                    
                 
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
@@ -390,8 +394,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 2:
                     //sauvegarde de la planete dans la liste des objets
                     //remplacer le 2 par un coef en fonction des materiaux
+                    String atome[] = new String [4];
                     HUD hud= new HUD(bx,by,ax,ay,"la planète");
-                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud);
+                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atome);
                     newp.zoomUpdate(zoomFactor,xOffset,yOffset);
                     objets.add(newp);
 
