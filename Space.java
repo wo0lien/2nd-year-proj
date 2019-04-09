@@ -378,8 +378,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     break;
                 case 1:
                     // Choix Atome
-                    new Choix atome = new Fenetre("Materiau Planete");
-                    
+                    new Choix atome = new Choix ("Materiau Planete");
+
                 
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
@@ -394,7 +394,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 2:
                     //sauvegarde de la planete dans la liste des objets
                     //remplacer le 2 par un coef en fonction des materiaux
-                    String atome[] = new String [4];
+                    
                     HUD hud= new HUD(bx,by,ax,ay,"la planète");
                     Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atome);
                     newp.zoomUpdate(zoomFactor,xOffset,yOffset);
@@ -572,6 +572,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             if (objet.getType() != "sun") {
                 objet.r += obj.r * 0.3; //on augmente la taille
                 objet.masse += obj.masse;
+                for (int x=0; x<objet.atome.length; x++){
+                    if (objet.atome[x]== false && obj.atome[x] == true){
+                        objet.atome[x] = true;
+                    }
+                }
             }
                 
             //animation de l'explosion

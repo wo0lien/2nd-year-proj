@@ -18,10 +18,10 @@ public abstract class ObjetCeleste {
     protected double zoomCoeff;
     protected int rZoom;
     protected int xZ,yZ;
-    public String atome[] = new String [4];
+    public boolean atome[] = new boolean [4];
 
 
-    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon, HUD hud, String [] a) {
+    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon, HUD hud, boolean [] a) {
         masse = m;
         x = ax;
         y = ay;
