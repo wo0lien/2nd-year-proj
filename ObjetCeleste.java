@@ -73,6 +73,8 @@ public abstract class ObjetCeleste {
     
     public abstract void resize();
 
+    //accesseurs
+
     public int GetX() {
         return this.x;
     }

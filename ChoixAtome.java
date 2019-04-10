@@ -8,7 +8,7 @@ import java.awt.AWTException;
 
 public class Fenetre extends JFrame implements ActionListener, KeyListener {
 
-   private JPanel pan;
+private JPanel pan;
 private JButton Azote, Carbone, Hydrogene, Oxygene;
 private JLabel Choix;
 boolean atome[] = new boolean [4];
