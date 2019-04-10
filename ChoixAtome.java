@@ -6,20 +6,22 @@ import javax.swing.*;
 import java.awt.AWTException;
 
 
-public class Fenetre extends JFrame implements ActionListener, KeyListener {
+public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
 
 private JPanel pan;
 private JButton Azote, Carbone, Hydrogene, Oxygene;
 private JLabel Choix;
 boolean atome[] = new boolean [4];
+private JFrame fen;
 
-public Fenetre (String ChoixComposition) throws AWTException{
+public ChoixAtome (String ChoixComposition) throws AWTException{
     super("ChoixComposition");
     
 
     this.setSize(1400, 850);
 
     //Jpanel principal (content pane)
+    fen = new JFrame ();
     pan = new JPanel();
     pan.setLayout(null);
     pan.setBackground(Color.gray);
@@ -49,12 +51,14 @@ public Fenetre (String ChoixComposition) throws AWTException{
     pan.add(Carbone);
     pan.add(Hydrogene);
     pan.add(Choix);
+    fen.add(pan);
 
+    @Override
     public void actionPerformed (ActionEvent e) {
         //reaction aux clics sur les boutons
         if (e.getSource()== Oxygene) {
             atome [0] = true;
-            pan.dispose();
+            pan.close();
         }
         else if (e.getSource() == Azote) {
             atome [1] = true;

@@ -1,15 +1,21 @@
-
+import java.awt.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import javax.swing.*;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 
 public class HUD extends JPanel {
 
     String objectName;
     String typeObj;
+    private JButton changeName;
+    Icon iconName;
 
     //variables Louise
 
@@ -40,6 +46,7 @@ public class HUD extends JPanel {
     }
 
     public HUD(int x, int y, int ax, int ay, String name) {
+        //iconName = new Icon("iconChange.jpg");
 
         String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                 "t", "u", "v", "w", "x", "y", "z" };
@@ -51,6 +58,11 @@ public class HUD extends JPanel {
         this.setBounds(x, y, ax, ay);
         this.setBackground(Color.black);
         typeObj=name;
+
+        //changeName= new JButton(iconName);
+       // changeName.setBounds(150,100,180,130);
+       // changeName.setLayout(null);
+       // this.add(changeName);
 
        /* temp = new JLabel();
         temp.setBounds(20, 140, 200, 25);
