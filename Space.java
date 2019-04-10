@@ -42,6 +42,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private double yOffset;
     private double mouseXReel;
     private double mouseYReel;
+    private int startX=0,startY=0;
+    private double xDiff=0,yDiff=0;
 
     //hud courant pour pouvoir l'afficher dans la fenetre
     private HUD hudCourant;
@@ -132,7 +134,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         //resize explosion
         resizedExplosion = explosion.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
-        resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
+        resizedPlanet = planetImage.getScaledInstance((int)(newPlanetRadius * 2 * zoomFactor), (int)(newPlanetRadius * 2 * zoomFactor), Image.SCALE_FAST);
 
         objets = new LinkedList<ObjetCeleste>();
         objetsTrajectoire = new LinkedList<ObjetCeleste>();
@@ -183,8 +185,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     //distance au soleil
                     if (obj.getType() != "sun") {
                         int dist = (int)Math.pow(2, Math.abs((double)(sun.GetX() - obj.GetX())) + Math.abs((double)(sun.GetY() - obj.GetY())));
-                        obj.SetTemp(sun.GetTemp() / dist * coefTemp);
-                        System.out.println(obj.GetTemp());
+                        /*obj.SetTemp(sun.GetTemp() / dist * coefTemp);
+                        System.out.println(obj.GetTemp());*/
                     }
                 }
             }
@@ -244,10 +246,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         g.setColor(Color.GREEN);
         //g.drawString("xZ " + (int)mouseXReel + " yZ " + (int)mouseYReel,mouseX,mouseY);
         //g.drawString("x " + mouseX + " y " + mouseY,mouseX,mouseY+15);
-       // g.drawString("xOffset :" + (int)xOffset + " yOffset : " + (int)yOffset,10,10);
+        //g.drawString("xOffset :" + (int)xOffset + " yOffset : " + (int)yOffset,10,10);
         //affichage de la liste des objets
 
         for (ObjetCeleste obj : objets) {
+            obj.zoomUpdate(zoomFactor,xOffset,yOffset);
             obj.paint(g);
         }
 
@@ -263,6 +266,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             // affichage classique de l'animation
             break;
         case 1:
+            
             // affichage de la planete sur le curseur de l'utilisateur
             if (mouseIn) {
                 g.drawImage(resizedPlanet , mouseX - newPlanetRadius, mouseY - newPlanetRadius, null);
@@ -271,7 +275,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         case 2:
             //position de la nouvelle planete fixee => fixage de la taille
             if (mouseIn) {
-                g.drawImage(resizedPlanet , newPlanetXReel - newPlanetRadius, newPlanetYReel - newPlanetRadius, null);
+                newPlanetXReel=updateSomeOffsetX(newPlanetX);
+                newPlanetYReel=updateSomeOffsetY(newPlanetY);
+                g.drawImage(resizedPlanet , newPlanetXReel - (int)(newPlanetRadius*zoomFactor), newPlanetYReel - (int)(newPlanetRadius*zoomFactor), null);
             }
             break;
         case 3:
@@ -281,12 +287,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 
                 copie();
 
-                objetsTrajectoire.getLast().setVitesseX((double)mouseX - newPlanetX);
-                objetsTrajectoire.getLast().setVitesseY((double)mouseY - newPlanetY);
+                objetsTrajectoire.getLast().setVitesseX((double)mouseXReel - newPlanetX);
+                objetsTrajectoire.getLast().setVitesseY((double)mouseYReel - newPlanetY);
 
                 calculTraject(objetsTrajectoire.getLast() , g);
             }
-
+        }
         //explosion
         if (explosionCounter > 25){
             explosing = false;
@@ -294,7 +300,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         if (explosing) {
             explosionCounter++;
 
-            g.drawImage(resizedExplosion, explosionX - explosionR , explosionY - explosionR, null);
+            g.drawImage(resizedExplosion, updateSomeOffsetX(explosionX) - (int)(explosionR*zoomFactor) , updateSomeOffsetY(explosionY) - (int)(explosionR*zoomFactor), null);
 
         } 
     }
@@ -313,7 +319,14 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.println("Drag");
+        xDiff=(double)(startX-e.getX())/zoomFactor;
+        yDiff=(double)(startY-e.getY())/zoomFactor;
+        xOffset+=xDiff;
+        yOffset+=yDiff;
+        updateMouseOffset();
+        startX=e.getX();
+        startY=e.getY();
+        repaint();
     }
 
     @Override
@@ -334,7 +347,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 newPlanetRadius = (int)Math.sqrt(Math.pow((int)mouseXReel - newPlanetX, 2) + Math.pow((int)mouseYReel - newPlanetY, 2));
 
                 //mise a l'echelle de la planete
-                resizedPlanet = planetImage.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
+                resizedPlanet = planetImage.getScaledInstance((int)(newPlanetRadius * 2 * zoomFactor), (int)(newPlanetRadius * 2 * zoomFactor), Image.SCALE_SMOOTH);
 
                 break;
             
@@ -358,17 +371,21 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         double dy = obj.GetY() - (int)mouseYReel;
                         double r = Math.sqrt(dx * dx + dy * dy);
                         if (r < obj.r) {
-                            System.out.println("j'affiche le hud");
                             hudCourant=obj.getHUD();
                             objSelected=obj;
                         }
                     }
                     break;
                 case 1:
+                    // Choix Atome
+                    new Choix atome = new Fenetre("Materiau Planete");
+                    
+                
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
                     newPlanetY = (int)mouseYReel;
-                    updateNewPlanetOffset();
+                    newPlanetXReel=updateSomeOffsetX(newPlanetX);
+                    newPlanetYReel=updateSomeOffsetY(newPlanetY);
                     //passage au mode suivant
                     System.out.println("Passe au mode selection taille");
                     mode = 2;
@@ -377,8 +394,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 case 2:
                     //sauvegarde de la planete dans la liste des objets
                     //remplacer le 2 par un coef en fonction des materiaux
+                    String atome[] = new String [4];
                     HUD hud= new HUD(bx,by,ax,ay,"la planète");
-                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud);
+                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atome);
                     newp.zoomUpdate(zoomFactor,xOffset,yOffset);
                     objets.add(newp);
 
@@ -424,10 +442,14 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     @Override
     public void mousePressed(MouseEvent e) {
+        startX=mouseX;
+        startY=mouseY;
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        xDiff=0;
+        yDiff=0;
     }
 
     @Override
@@ -447,10 +469,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             testRotation();
             updateOffset();
             updateMouseOffset();
-            //if (zoomFactor<10 && rotation==1) {
+            if (zoomFactor<10 && rotation==1) {
                 zoom();
-            //}  
-            rotation=0;      
+            }  
             //scroll vers le haut
         } else {
             zoomFactor/=1.1;
@@ -458,10 +479,9 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             testRotation();
             updateOffset();
             updateMouseOffset();
-            //if (zoomFactor>0.1 && rotation==-1) {
+            if (zoomFactor>0.1 && rotation==-1) {
                 zoom();
-            //} 
-            rotation=0;
+            } 
             // scroll vers le bas
         }
         zoomR=Math.random();
@@ -485,9 +505,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         mouseXReel=xOffset+mouseX/zoomFactor;
         mouseYReel=yOffset+mouseY/zoomFactor;
     }
-    public void updateNewPlanetOffset() {
-        newPlanetXReel = (int)(-(xOffset-newPlanetX)*zoomFactor);
-        newPlanetYReel = (int)(-(xOffset-newPlanetY)*zoomFactor);
+    public int updateSomeOffsetX(double xOff) {
+        return (int)(-(xOffset-xOff)*zoomFactor);
+    }
+    public int updateSomeOffsetY(double yOff) {
+        return (int)(-(yOffset-yOff)*zoomFactor);
     }
 
     //fluidifier le mouvement de la molette qui est parfois imprécis
@@ -595,7 +617,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
             //on clone et on ajoute les éléments
             if (obj.getType() == "planet") {
-                Planete np = new Planete(obj.GetMasse(), obj.GetVx(), obj.GetVy(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD());
+                Planete np = new Planete(obj.GetMasse(), obj.GetVx(), obj.GetVy(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD(), obj.getatome());
                 objetsTrajectoire.add(np);
             } else {
                 Soleil ns = new Soleil(obj.GetMasse(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD());
@@ -625,7 +647,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 //affichage
                 if (i%2 == 0) {
                     g.setColor(Color.red);
-                    g.fillOval(obj.GetX() - rad, obj.GetY() - rad, 2 * rad, 2 * rad);
+                    g.fillOval(updateSomeOffsetX(obj.GetX()) - rad, updateSomeOffsetY(obj.GetY()) - rad, 2 * rad, 2 * rad);
                 }
             }
         }

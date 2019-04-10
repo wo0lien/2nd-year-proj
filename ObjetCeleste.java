@@ -18,8 +18,10 @@ public abstract class ObjetCeleste {
     protected double zoomCoeff;
     protected int rZoom;
     protected int xZ,yZ;
+    public String atome[] = new String [4];
 
-    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon, HUD hud) {
+
+    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon, HUD hud, String [] a) {
         masse = m;
         x = ax;
         y = ay;
@@ -33,6 +35,9 @@ public abstract class ObjetCeleste {
         temp = 0;
         rZoom=r;
         this.hud=hud;
+        for (int j =0 ; j<a.length ; j++ ) {
+            atome[j] = a[j];
+        }
 
 
         //bug : la linked list n'est pas dans le constructeur on ne peut pas y avoir acces depuis ici il faut faire en sort de créer la methode update dans space.java
@@ -98,12 +103,16 @@ public abstract class ObjetCeleste {
         return hud;
     }
 
+<<<<<<< HEAD
+=======
+    public String [] getatome() {
+        return this.atome;
+    }
+>>>>>>> 6ba38a7ce7229d82956439316dd63ce3123ad0e3
     public void zoomUpdate(double zoom,double xOffset, double yOffset) {
         xZ = (int)(-(xOffset-x)*zoom);
         yZ = (int)(-(yOffset-y)*zoom);
         rZoom=(int)(r*zoom);
-    }
-    public void zoomUpdate() {
     }
     public abstract void setVitesseX(double vx);
 

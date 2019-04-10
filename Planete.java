@@ -9,8 +9,8 @@ import javax.imageio.ImageIO;
  */
 public class Planete extends ObjetCeleste{
 
-    public Planete(double m, double vx, double vy, int ax, int ay, Image i, int rayon, HUD hud) {
-        super(m, vx, vy, ax, ay, i,rayon,hud); //on appelle le constructeur de la class parente ObjCelestes
+    public Planete(double m, double vx, double vy, int ax, int ay, Image i, int rayon, HUD hud, String [] a ) {
+        super(m, vx, vy, ax, ay, i,rayon,hud,a); //on appelle le constructeur de la class parente ObjCelestes
         try {
             File pathToPlanet = new File("earth.png"); 
             //transformation en objet image des fichier    
