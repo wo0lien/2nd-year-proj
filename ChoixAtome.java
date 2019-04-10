@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.AWTException;
 
 
-public class Choix extends JFrame implements ActionListener, KeyListener {
+public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
 
 private JPanel pan;
 private JButton Azote, Carbone, Hydrogene, Oxygene;
@@ -49,6 +49,7 @@ public Choix (String ChoixComposition) throws AWTException{
     pan.add(Hydrogene);
     pan.add(Choix);
 
+    @Override
     public void actionPerformed (ActionEvent e) {
         //reaction aux clics sur les boutons
         if (e.getSource()== Oxygene) {
