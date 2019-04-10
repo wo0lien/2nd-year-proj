@@ -68,6 +68,8 @@ public abstract class ObjetCeleste {
     
     public abstract void resize();
 
+    //accesseurs
+
     public int GetX() {
         return this.x;
     }
@@ -95,6 +97,7 @@ public abstract class ObjetCeleste {
     public HUD getHUD() {
         return hud;
     }
+
     public void zoomUpdate(double zoom,double xOffset, double yOffset) {
         xZ = (int)(-(xOffset-x)*zoom);
         yZ = (int)(-(yOffset-y)*zoom);
