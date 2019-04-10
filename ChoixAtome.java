@@ -8,9 +8,10 @@ import java.awt.AWTException;
 
 public class Choix extends JFrame implements ActionListener, KeyListener {
 
-   private JPanel pan;
+private JPanel pan;
 private JButton Azote, Carbone, Hydrogene, Oxygene;
 private JLabel Choix;
+boolean atome[] = new boolean [4];
 
 public Choix (String ChoixComposition) throws AWTException{
     super("ChoixComposition");
@@ -51,16 +52,20 @@ public Choix (String ChoixComposition) throws AWTException{
     public void actionPerformed (ActionEvent e) {
         //reaction aux clics sur les boutons
         if (e.getSource()== Oxygene) {
-
+            atome [0] = true;
+            pan.dispose();
         }
         else if (e.getSource() == Azote) {
-
+            atome [1] = true;
+            pan.dispose();
         }
         else if (e.getSource()== Carbone) {
-
+            atome [2] = true;
+            pan.dispose();
         }
         else if (e.getSource() == Hydrogene){
-
+            atome [3] = true;
+            pan.dispose();
         }
     }
 }
