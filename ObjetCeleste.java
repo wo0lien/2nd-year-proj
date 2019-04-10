@@ -102,7 +102,7 @@ public abstract class ObjetCeleste {
     }
 
     public String [] getatome() {
-        return this.atome;
+        return atome;
     }
     public void zoomUpdate(double zoom,double xOffset, double yOffset) {
         xZ = (int)(-(xOffset-x)*zoom);

@@ -6,14 +6,14 @@ import javax.swing.*;
 import java.awt.AWTException;
 
 
-public class Choix extends JFrame implements ActionListener, KeyListener {
+public class Fenetre extends JFrame implements ActionListener, KeyListener {
 
    private JPanel pan;
 private JButton Azote, Carbone, Hydrogene, Oxygene;
 private JLabel Choix;
 boolean atome[] = new boolean [4];
 
-public Choix (String ChoixComposition) throws AWTException{
+public Fenetre (String ChoixComposition) throws AWTException{
     super("ChoixComposition");
     
 
