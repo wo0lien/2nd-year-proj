@@ -576,6 +576,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     if (objet.atome[x]== false && obj.atome[x] == true){
                         objet.atome[x] = true;
                     }
+                }
             }
                 
             //animation de l'explosion
@@ -624,7 +625,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 Planete np = new Planete(obj.GetMasse(), obj.GetVx(), obj.GetVy(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD(), obj.getatome());
                 objetsTrajectoire.add(np);
             } else {
-                Soleil ns = new Soleil(obj.GetMasse(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD());
+                $ ns = new Soleil(obj.GetMasse(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD());
                 objetsTrajectoire.add(ns);
             }
         }

@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+
 import javax.swing.*;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -10,12 +12,14 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 
-public class HUD extends JPanel {
+public class HUD extends JPanel implements ActionListener,KeyListener {
 
     String objectName;
     String typeObj;
     private JButton changeName;
     Icon iconName;
+    boolean changerName = false;
+    String newName;
 
     //variables Louise
 
@@ -46,7 +50,7 @@ public class HUD extends JPanel {
     }
 
     public HUD(int x, int y, int ax, int ay, String name) {
-        //iconName = new Icon("iconChange.jpg");
+        ImageIcon iconName = createImageIcon("iconChange.jpg");
 
         String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                 "t", "u", "v", "w", "x", "y", "z" };
@@ -59,10 +63,10 @@ public class HUD extends JPanel {
         this.setBackground(Color.black);
         typeObj=name;
 
-        //changeName= new JButton(iconName);
-       // changeName.setBounds(150,100,180,130);
-       // changeName.setLayout(null);
-       // this.add(changeName);
+        changeName= new JButton(iconName);
+        changeName.setBounds(150,100,180,130);
+        changeName.setLayout(null);
+        this.add(changeName);
 
        /* temp = new JLabel();
         temp.setBounds(20, 140, 200, 25);
@@ -122,6 +126,23 @@ public class HUD extends JPanel {
         // repaint();
 
     }
+    public void actionPerformed(ActionEvent e) {
+        changerName=!changerName;
+        newName="";
+    }
+    public void keyPressed(KeyEvent e) { 
+
+     }
+    public void keyReleased(KeyEvent e) {
+
+     }
+       // méthode exécutée à chaque fois qu’une touche unicode est utilisée (donc pas CTRL, SHIFT ou ALT par exemple)
+    public void keyTyped(KeyEvent e) { 
+        System.out.println(e.getSource());
+        System.out.println(e.getKeyCode());
+        System.out.println(e.getKeyChar());
+        newName+=(String)(e.getKeyChar());
+    }
 
     @Override
     public void paint(Graphics g) {
@@ -155,14 +176,5 @@ public class HUD extends JPanel {
             g.drawString("Oxygène", 40,560 );
             g.drawString("Hydrogène", 40,600 );
         }
-
-    
-
-
-
-        
-        
-
-
     }
 }
