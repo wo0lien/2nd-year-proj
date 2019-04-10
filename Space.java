@@ -344,7 +344,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 break;
             case 2:
                 //mode fixage de la taille de la planete
-                newPlanetRadius = (int)Math.sqrt(Math.pow((int)mouseXReel - newPlanetX, 2) + Math.pow((int)mouseYReel - newPlanetY, 2));
+                newPlanetRadius = Math.max((int)Math.sqrt(Math.pow((int)mouseXReel - newPlanetX, 2) + Math.pow((int)mouseYReel - newPlanetY, 2)), 1);
 
                 //mise a l'echelle de la planete
                 resizedPlanet = planetImage.getScaledInstance((int)(newPlanetRadius * 2 * zoomFactor), (int)(newPlanetRadius * 2 * zoomFactor), Image.SCALE_SMOOTH);
@@ -378,8 +378,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     break;
                 case 1:
                     // Choix Atome
-                    
-
                 
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
@@ -396,7 +394,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     //remplacer le 2 par un coef en fonction des materiaux
                     
                     HUD hud= new HUD(bx,by,ax,ay,"la planète");
-                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atome);
+                    boolean[] at = new boolean[4]; 
+                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, at);
                     newp.zoomUpdate(zoomFactor,xOffset,yOffset);
                     objets.add(newp);
 
