@@ -1,3 +1,4 @@
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -17,6 +18,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
 
 import java.net.URL;
 
@@ -88,7 +90,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private Soleil sun;
     private double coefTemp;
 
-    public Space(int xPos, int yPos, int x, int y,int bx, int by, int ax, int ay) {
+    // ChoixAtome
+    private boolean atome[] = new boolean [4];
+    private int masse=0;
+
+    public Space(int xPos, int yPos, int x, int y,int bx, int by, int ax, int ay) throws AWTException {
 
         System.out.println("Create the universe");
 
@@ -383,7 +389,13 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     break;
                 case 1:
                     // Choix Atome
+            
+                    ChoixAtome choix = new ChoixAtome("choisis ta compo", this);
+                    atome = choix.getAtome();
                 
+                    
+
+
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
                     newPlanetY = (int)mouseYReel;
@@ -398,9 +410,21 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     //sauvegarde de la planete dans la liste des objets
                     //remplacer le 2 par un coef en fonction des materiaux
                     
-                    HUD hud= new HUD(bx,by,ax,ay,"la planète");
-                    boolean[] at = new boolean[4]; 
-                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, at);
+                    HUD hud= new HUD(bx,by,ax,ay,"la planète"); 
+                    if (atome [0] == true){
+                        masse =6000;
+                    }
+                    if (atome [1] == true){
+                        masse =3000;
+                    }
+                    if (atome [2] == true){
+                        masse =2000;
+                    }
+                    if (atome [3] == true){
+                        masse =400;
+                    }
+
+                    Planete newp = new Planete((double)masse * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atome);
                     newp.zoomUpdate(zoomFactor,xOffset,yOffset);
                     objets.add(newp);
 
@@ -660,4 +684,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             }
         }
     }
+
+
 }
