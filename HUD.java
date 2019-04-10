@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -12,14 +13,16 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 
-public class HUD extends JPanel implements ActionListener,KeyListener {
+public class HUD extends JPanel implements ActionListener, KeyListener {
 
     String objectName;
     String typeObj;
     private JButton changeName;
-    Icon iconName;
+    private JPanel mainPanel;
+    private JTextField TF;
     boolean changerName = false;
     String newName;
+
 
     //variables Louise
 
@@ -50,7 +53,10 @@ public class HUD extends JPanel implements ActionListener,KeyListener {
     }
 
     public HUD(int x, int y, int ax, int ay, String name) {
-        ImageIcon iconName = createImageIcon("iconChange.jpg");
+        mainPanel=new JPanel();
+        mainPanel.setBounds(20, 20, w - 40, h - 40);
+        mainPanel.setVisible(true);
+        //ImageIcon iconName = ImageIcon.createImageIcon("iconChange.jpg");
 
         String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                 "t", "u", "v", "w", "x", "y", "z" };
@@ -63,10 +69,17 @@ public class HUD extends JPanel implements ActionListener,KeyListener {
         this.setBackground(Color.black);
         typeObj=name;
 
-        changeName= new JButton(iconName);
+        /*changeName= new JButton(iconName);
         changeName.setBounds(150,100,180,130);
         changeName.setLayout(null);
-        this.add(changeName);
+        changeName.addActionListener(this);*/
+        //mainPanel.add(changeName);
+
+        //mainPanel.addKeyListener(this);
+        //this.setContentPane(mainPanel);
+        
+        //TF=new JTextField(objectName);
+        //TF.setBounds
 
        /* temp = new JLabel();
         temp.setBounds(20, 140, 200, 25);
@@ -127,8 +140,10 @@ public class HUD extends JPanel implements ActionListener,KeyListener {
 
     }
     public void actionPerformed(ActionEvent e) {
+        objectName=newName;
         changerName=!changerName;
         newName="";
+        repaint();
     }
     public void keyPressed(KeyEvent e) { 
 
@@ -141,7 +156,9 @@ public class HUD extends JPanel implements ActionListener,KeyListener {
         System.out.println(e.getSource());
         System.out.println(e.getKeyCode());
         System.out.println(e.getKeyChar());
-        newName+=(String)(e.getKeyChar());
+        newName+=e.getKeyChar();
+        objectName=newName;
+        repaint();
     }
 
     @Override

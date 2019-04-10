@@ -103,7 +103,7 @@ public abstract class ObjetCeleste {
         return hud;
     }
 
-    public String [] getatome() {
+    public boolean[] getatome() {
         return atome;
     }
     public void zoomUpdate(double zoom,double xOffset, double yOffset) {

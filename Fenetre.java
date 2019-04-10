@@ -7,7 +7,7 @@ import java.awt.AWTException;
 /**
  * Fenetre
  */
-public class Fenetre extends JFrame implements ActionListener, KeyListener {
+public class Fenetre extends JFrame implements ActionListener {
 
     //variables
 
@@ -69,7 +69,6 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
         this.setContentPane(mainPanel);
 
         //ajout des listeners
-        this.addKeyListener(this);
         newPlanet.addActionListener(this);
         timerButton.addActionListener(this);
 
@@ -106,13 +105,4 @@ public class Fenetre extends JFrame implements ActionListener, KeyListener {
 
         }
     }
-
-    // keyEvents pour la suite
-    @Override
-    public void keyPressed(KeyEvent e) {}
-    @Override
-    public void keyReleased(KeyEvent e) {}
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
 }

@@ -9,8 +9,9 @@ import javax.imageio.ImageIO;
  */
 public class Planete extends ObjetCeleste{
 
-    public Planete(double m, double vx, double vy, int ax, int ay, Image i, int rayon, HUD hud, Boolean [] a ) {
-        super(m, vx, vy, ax, ay, i,rayon,hud,a); //on appelle le constructeur de la class parente ObjCelestes
+    public Planete(double m, double vx, double vy, int ax, int ay, Image i, int rayon, HUD hud, boolean[] a) {
+        super(m, vx, vy, ax, ay, i,rayon,hud, new boolean[4]); //on appelle le constructeur de la class parente ObjCelestes
+        
         try {
             File pathToPlanet = new File("earth.png"); 
             //transformation en objet image des fichier    
@@ -22,10 +23,11 @@ public class Planete extends ObjetCeleste{
 
     public void paint(Graphics g) {
         
-        //afficahge de trajectoire
+        //affichage de trajectoire
 
         g.setColor(Color.RED);
         g.drawImage(disp, this.xZ - disp.getWidth(null) / 2, this.yZ - disp.getHeight(null) / 2, null);
+        //enlever les commentaires pour débugger : affiche les coordonnées réelles et les coordonnées affichées
         //g.drawString("x " + x + " y " + y,xZ,yZ);
         //g.drawString("xZ " + xZ + " yZ " + yZ,xZ,yZ+15);
     }
@@ -40,6 +42,7 @@ public class Planete extends ObjetCeleste{
         vy = vity;
     }
 
+    //update les coordonnées de l'objet à l'instant t+1
     @Override
     public void update(int dt) {
         this.x += dt * vx / 1000;

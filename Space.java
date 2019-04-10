@@ -31,17 +31,23 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     //variables de zoom
     private double zoomFactor=1;
+
+    //retiens les 3 dernieres valeurs du zoom pour déterminer le sens de rotation 
+    //et fluidifier le mouvement imprécis de la molette (voir testRotation())
     private double prevZoom;
     private double pprevZoom;
     private double ppprevZoom;
     private int rotation; //0 no rotation, 1 zoom in, -1 zoom out
-    private double zoomR;
-    private double prevZoomR;
-    private int tempsZoom;
-    private double xOffset; //coordonnées d'un point 'fixe'
+
+    //coordonnées d'un point 'fixe' ici le point reel 0,0 sur la map
+    private double xOffset; 
     private double yOffset;
+
+    //retiens les coordonnées sur la map de la souris
     private double mouseXReel;
     private double mouseYReel;
+    
+    //variables pour drag pour le zoom
     private int startX=0,startY=0;
     private double xDiff=0,yDiff=0;
 
@@ -103,7 +109,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         xOffset=0;
         yOffset=0;
-        zoomR=0;
 
         // buffered image
         monBuf = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
@@ -344,7 +349,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 break;
             case 2:
                 //mode fixage de la taille de la planete
-                newPlanetRadius = (int)Math.sqrt(Math.pow((int)mouseXReel - newPlanetX, 2) + Math.pow((int)mouseYReel - newPlanetY, 2));
+                newPlanetRadius = Math.max((int)Math.sqrt(Math.pow((int)mouseXReel - newPlanetX, 2) + Math.pow((int)mouseYReel - newPlanetY, 2)), 1);
 
                 //mise a l'echelle de la planete
                 resizedPlanet = planetImage.getScaledInstance((int)(newPlanetRadius * 2 * zoomFactor), (int)(newPlanetRadius * 2 * zoomFactor), Image.SCALE_SMOOTH);
@@ -378,8 +383,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     break;
                 case 1:
                     // Choix Atome
-                    
-
                 
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
@@ -396,7 +399,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     //remplacer le 2 par un coef en fonction des materiaux
                     
                     HUD hud= new HUD(bx,by,ax,ay,"la planète");
-                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atome);
+                    boolean[] at = new boolean[4]; 
+                    Planete newp = new Planete((double)3000 * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, at);
                     newp.zoomUpdate(zoomFactor,xOffset,yOffset);
                     objets.add(newp);
 
@@ -433,7 +437,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void cancelPLanet() {
         System.out.println("annulation du placement de la planète");
             
-            if (mode != 0){
+            if (mode != 0 && size!=objets.size){
                 objets.removeLast();
                 mode=0;
             }
@@ -484,7 +488,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             } 
             // scroll vers le bas
         }
-        zoomR=Math.random();
     }
 
     public void zoom() {
@@ -625,7 +628,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 Planete np = new Planete(obj.GetMasse(), obj.GetVx(), obj.GetVy(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD(), obj.getatome());
                 objetsTrajectoire.add(np);
             } else {
-                $ ns = new Soleil(obj.GetMasse(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD());
+                Soleil ns = new Soleil(obj.GetMasse(), obj.GetX(), obj.GetY(), resizedPlanet,obj.GetR(), obj.getHUD());
                 objetsTrajectoire.add(ns);
             }
         }
