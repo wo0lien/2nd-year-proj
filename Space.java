@@ -27,35 +27,39 @@ import java.net.URL;
  */
 public class Space extends JPanel implements  MouseListener, MouseMotionListener,MouseWheelListener {
 
+    //constants
+
+    private static final int sunDiam = 100;
+
     // timer
-    private int tempsJours = 0, tempsAnnées=0, dt=40;
+    private int tempsJours = 0, tempsAnnées = 0, dt = 40;
     private boolean pause;
 
-    //variables de zoom
-    private double zoomFactor=1;
+    // variables de zoom
+    private double zoomFactor = 1;
 
-    //retiens les 3 dernieres valeurs du zoom pour déterminer le sens de rotation 
-    //et fluidifier le mouvement imprécis de la molette (voir testRotation())
+    // retiens les 3 dernieres valeurs du zoom pour déterminer le sens de rotation
+    // et fluidifier le mouvement imprécis de la molette (voir testRotation())
     private double prevZoom;
     private double pprevZoom;
     private double ppprevZoom;
-    private int rotation; //0 no rotation, 1 zoom in, -1 zoom out
+    private int rotation; // 0 no rotation, 1 zoom in, -1 zoom out
 
-    //coordonnées d'un point 'fixe' ici le point reel 0,0 sur la map
-    private double xOffset; 
+    // coordonnées d'un point 'fixe' ici le point reel 0,0 sur la map
+    private double xOffset;
     private double yOffset;
 
-    //retiens les coordonnées sur la map de la souris
+    // retiens les coordonnées sur la map de la souris
     private double mouseXReel;
     private double mouseYReel;
-    
-    //variables pour drag pour le zoom
-    private int startX=0,startY=0;
-    private double xDiff=0,yDiff=0;
 
-    //hud courant pour pouvoir l'afficher dans la fenetre
+    // variables pour drag pour le zoom
+    private int startX = 0, startY = 0;
+    private double xDiff = 0, yDiff = 0;
+
+    // hud courant pour pouvoir l'afficher dans la fenetre
     private HUD hudCourant;
-    private int bx,by,ax,ay;
+    private int bx, by, ax, ay;
     private ObjetCeleste objSelected;
 
     // variable de modes en fonction des actions de l'utilisateur mode 0 normal,
@@ -63,8 +67,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private int mode = 0;
     private boolean mouseIn = false;
     private int mouseX = 0, mouseY = 0;
-    private int newPlanetX =  0, newPlanetY = 0, newPlanetRadius = 20;
-    private int newPlanetXReel =0 , newPlanetYReel=0;
+    private int newPlanetX = 0, newPlanetY = 0, newPlanetRadius = 20;
+    private int newPlanetXReel = 0, newPlanetYReel = 0;
 
     // Image pour l'affichage sans scintillements
     private BufferedImage monBuf; // buffer d’affichage
@@ -74,14 +78,14 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private Image resizedPlanet;
     private Image resizedSun;
 
-    //explosion
-    private Image explosion, resizedExplosion; 
+    // explosion
+    private Image explosion, resizedExplosion;
     private int explosionX, explosionY, explosionCounter, explosionR;
     private boolean explosing;
 
-    //objects
+    // objects
 
-    private LinkedList<ObjetCeleste> objets; 
+    private LinkedList<ObjetCeleste> objets;
     private LinkedList<ObjetCeleste> objetsTrajectoire;
     private LinkedList<ObjetCeleste> objetsDetruits;
     private LinkedList<ObjetCeleste> objetsDestructeurs;
@@ -91,10 +95,10 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private double coefTemp;
 
     // ChoixAtome
-    private boolean atome[] = new boolean [4];
-    private int masse=0;
+    private boolean atome[] = new boolean[4];
+    private int masse = 0;
 
-    public Space(int xPos, int yPos, int x, int y,int bx, int by, int ax, int ay) throws AWTException {
+    public Space(int xPos, int yPos, int x, int y, int bx, int by, int ax, int ay) throws AWTException {
 
         System.out.println("Create the universe");
 
@@ -103,49 +107,62 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         pause = true;
 
-        this.bx=bx;
-        this.by=by;
-        this.ax=ax;
-        this.ay=ay;
+        this.bx = bx;
+        this.by = by;
+        this.ax = ax;
+        this.ay = ay;
 
-        hudCourant=new HUD();
-        objSelected=null;
+        // creation d'un HUD vide pour l'affichage initial
+        hudCourant = new HUD();
+        objSelected = null;
 
+        // on récupère la taille de space dans une variable dim
         Dimension dim = getSize();
 
-        xOffset=0;
-        yOffset=0;
+        // les offsets initiaux sont nuls
+        xOffset = 0;
+        yOffset = 0;
 
-        // buffered image
+        // buffered image pour l'affichage sans scintillements
         monBuf = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
 
         // images
 
         try {
-            
-            //chemins de fichier
+
+            // chemins de fichier
 
             File pathToSpace = new File("space_with_stars.png");
             File pathToPlanet = new File("earth.png");
             File pathToSun = new File("sun.png");
-            
-            //transformation en objet image des fichier    
+
+            // transformation en objet image des fichier
             spaceStars = ImageIO.read(pathToSpace);
             planetImage = ImageIO.read(pathToPlanet);
             sunImage = ImageIO.read(pathToSun);
-        
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // le gif de l'explosion est chargé differement
         try {
             explosion = new ImageIcon("explosion.gif").getImage();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //resize explosion
+        // les image redimensionnées des images initiales
+        // on repart toujours de l'image initiale pour éviter les dégradations lié à un
+        // nombre trop grand de redimensionnement
         resizedExplosion = explosion.getScaledInstance(newPlanetRadius * 2, newPlanetRadius * 2, Image.SCALE_FAST);
-        resizedPlanet = planetImage.getScaledInstance((int)(newPlanetRadius * 2 * zoomFactor), (int)(newPlanetRadius * 2 * zoomFactor), Image.SCALE_FAST);
+        resizedPlanet = planetImage.getScaledInstance((int) (newPlanetRadius * 2 * zoomFactor),
+                (int) (newPlanetRadius * 2 * zoomFactor), Image.SCALE_FAST);
+
+        // space stars ne sera rescale qu'une seule fois on peut le faire directement
+        spaceStars = spaceStars.getScaledInstance((int) dim.getWidth(), (int) dim.getHeight(), Image.SCALE_DEFAULT);
+
+        // initialisation de toutes les listes d'objets
 
         objets = new LinkedList<ObjetCeleste>();
         objetsTrajectoire = new LinkedList<ObjetCeleste>();
@@ -158,50 +175,51 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         this.addMouseMotionListener(this);
         this.addMouseWheelListener(this);
 
-        //ajout du soleil au milieu de la fenetre
+        // ajout du soleil au milieu de la fenetre
 
-        int SunDiam = 100;
+        resizedSun = sunImage.getScaledInstance(sunDiam, sunDiam, Image.SCALE_FAST);
+        HUD h = new HUD(bx, by, ax, ay, "l'étoile");
 
-        resizedSun = sunImage.getScaledInstance(SunDiam, SunDiam, Image.SCALE_FAST);
-        HUD h = new HUD(bx,by,ax,ay,"l'étoile");
-
-        sun = new Soleil(100000, 400, 400, resizedSun, SunDiam / 2, h);
+        sun = new Soleil(100000, (int)dim.getWidth() / 2, (int)dim.getHeight() / 2, resizedSun, sunDiam / 2, h);
         objets.add(sun);
 
         coefTemp = 100;
-        size=objets.size();
+        size = objets.size();
 
         repaint();
 
     }
 
     public void timerPerformed() {
-            // si l'animation tourne on peut update la position des planetes
+        // si l'animation tourne on peut update la position des planetes
 
-            if (!pause) {
-                //appel de la fonction pour toutes les interractions 
-                interractions(objets, false);
+        if (!pause) {
+            // appel de la fonction pour toutes les interractions
+            interractions(objets, false);
 
-                //incrémentation du timer
-                tempsJours++;
-                if (tempsJours==365) {
-                    tempsJours=0;
-                    tempsAnnées++;
-                }
+            // incrémentation du timer
+            tempsJours++;
+            if (tempsJours == 365) {
+                tempsJours = 0;
+                tempsAnnées++;
+            }
 
-                //setup les variables de températures 
+            // setup les variables de températures
 
-                for (ObjetCeleste obj : objets) {
+            for (ObjetCeleste obj : objets) {
 
-                    //distance au soleil
-                    if (obj.getType() != "sun") {
-                        int dist = (int)Math.pow(2, Math.abs((double)(sun.GetX() - obj.GetX())) + Math.abs((double)(sun.GetY() - obj.GetY())));
-                        /*obj.SetTemp(sun.GetTemp() / dist * coefTemp);
-                        System.out.println(obj.GetTemp());*/
-                    }
+                // distance au soleil
+                if (obj.getType() != "sun") {
+                    int dist = (int) Math.pow(2, Math.abs((double) (sun.GetX() - obj.GetX()))
+                            + Math.abs((double) (sun.GetY() - obj.GetY())));
+                    /*
+                     * obj.SetTemp(sun.GetTemp() / dist * coefTemp);
+                     * System.out.println(obj.GetTemp());
+                     */
                 }
             }
-            repaint();
+        }
+        repaint();
     }
 
     /**
@@ -211,7 +229,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         System.out.println("Passage en mode ajout de planete");
 
-        //reinitialisation des variables necessaires
+        // reinitialisation des variables necessaires
 
         newPlanetRadius = 20;
 
@@ -248,6 +266,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void Prepaint(Graphics g) {
         
         // draw background image
+        //rescale spaceStars
 
         g.drawImage(spaceStars, 0, 0, null);
 
@@ -461,7 +480,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void cancelPLanet() {
         System.out.println("annulation du placement de la planète");
             
-            if (mode != 0 && size!=objets.size){
+            if (mode != 0 && size != objets.size()){
                 objets.removeLast();
                 mode=0;
             }

@@ -11,10 +11,14 @@ public class Fenetre extends JFrame implements ActionListener {
 
     //variables
 
-    private JPanel mainPanel, footerPanel, hud;
+    private static final int _400 = 400;
+	private JPanel mainPanel, footerPanel, hud;
     private JButton newPlanet, timerButton;
     private JTextArea timeCountJours, timeCountYears;
     private Space space;
+
+    //variable dimension pour récupérer la taille de l'écran en mode fullscreen
+    Dimension screenSize;
 
     //timer
     Timer t;
@@ -23,22 +27,36 @@ public class Fenetre extends JFrame implements ActionListener {
     public Fenetre(String nom) throws AWTException{
         super(nom);
 
+        screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        //set la taille de la fenetre
         this.setSize(1400, 850);
+        
+        //make it fullscreen
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        this.setUndecorated(true);
 
         //Jpanel principal (content pane)
         mainPanel = new JPanel();
         mainPanel.setLayout(null);
         mainPanel.setBackground(Color.black);
 
-        //création du JPanel Space a la taille de la fenetre
-        space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150,this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+        //création du JPanel Space a la taille de la fenetre 
+        //space = new Space(this.getInsets().left , this.getInsets().top, this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150, this.getWidth() - this.getInsets().left - this.getInsets().right - 400, this.getInsets().top, 400, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150);
+        
+        //creation de space à la taille de l'écran 
+        space = new Space(0, 0, (int)screenSize.getWidth() - 400, (int)screenSize.getHeight() - 150, (int)screenSize.getWidth() - 400, 0 , 400, (int)screenSize.getHeight() - 150);
         mainPanel.add(space);
 
         //panel de bas de page
 
         footerPanel = new JPanel();
         footerPanel.setLayout(null);
-        footerPanel.setBounds(this.getInsets().left, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150, this.getWidth() - this.getInsets().left - this.getInsets().right, 150);
+        //footerPanel.setBounds(this.getInsets().left, this.getHeight() - this.getInsets().top - this.getInsets().bottom - 150, this.getWidth() - this.getInsets().left - this.getInsets().right, 150);
+        
+        //la taille du footer panel dépend de la taille de l'écran
+        footerPanel.setBounds(0, (int)screenSize.getHeight() - 150, (int)screenSize.getWidth(), 150);
+        
         footerPanel.setBackground(Color.WHITE);
 
         newPlanet = new JButton("Nouvelle planete");
