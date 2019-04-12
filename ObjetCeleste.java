@@ -99,7 +99,7 @@ public abstract class ObjetCeleste {
         return r;
     }
 
-    public int GetTemp() {
+    public double GetTemp() {
         return temp;
     }
 
