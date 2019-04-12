@@ -194,6 +194,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         // si l'animation tourne on peut update la position des planetes
 
         if (!pause) {
+
             // appel de la fonction pour toutes les interractions
             interractions(objets, false);
 
@@ -209,13 +210,13 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             for (ObjetCeleste obj : objets) {
 
                 // distance au soleil
+                //on verifie que ce ne soit pas le soleil lui-meme
                 if (obj.getType() != "sun") {
-                    int dist = (int) Math.pow(2, Math.abs((double) (sun.GetX() - obj.GetX()))
-                            + Math.abs((double) (sun.GetY() - obj.GetY())));
-                    /*
-                     * obj.SetTemp(sun.GetTemp() / dist * coefTemp);
-                     * System.out.println(obj.GetTemp());
-                     */
+
+                    double dist = Math.sqrt(Math.abs((double) (sun.GetX() - obj.GetX())) * Math.abs((double) (sun.GetX() - obj.GetX())) + Math.abs((double) (sun.GetY() - obj.GetY())) * Math.abs((double) (sun.GetY() - obj.GetY())));
+                    
+                    obj.SetTemp(sun.GetTemp() / dist * coefTemp);
+                    
                 }
             }
         }
@@ -224,6 +225,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
     /**
      * Methode pour entrer dans le mode de création d'une planete
+     * Appel depuis la fenetre et le bouton d'ajout de planete
      */
     public void NewPlanet() {
 
@@ -238,11 +240,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         mode = 1;
     }
 
-
+    /**
+     * Methode appelée depuis la fenetre par l'appui du bouton start/stop animation
+     */
     public void TimerButton() {
-        
         //changement d'etat de la variable pause
-        
         pause = !pause;
     }
 
@@ -256,7 +258,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         Prepaint(monBuf.getGraphics());
 
-        g.drawImage(monBuf, getInsets().left, getInsets().top, null);
+        //g.drawImage(monBuf, getInsets().left, getInsets().top, null);
+        g.drawImage(monBuf, 0, 0, null);
 
     }
 
@@ -266,10 +269,10 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void Prepaint(Graphics g) {
         
         // draw background image
-        //rescale spaceStars
 
         g.drawImage(spaceStars, 0, 0, null);
 
+        //on update les offsets (pourrait changer de place ??)
         updateMouseOffset();
         updateOffset();
         

@@ -99,6 +99,10 @@ public abstract class ObjetCeleste {
         return r;
     }
 
+    public int GetTemp() {
+        return temp;
+    }
+
     public HUD getHUD() {
         return hud;
     }
@@ -117,5 +121,8 @@ public abstract class ObjetCeleste {
 
     public String getType() {
         return "";
+    }
+    public void SetTemp(double t) {
+        temp = t;
     }
 }
