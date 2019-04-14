@@ -7,7 +7,7 @@ import java.awt.AWTException;
 /**
  * Fenetre
  */
-public class Fenetre extends JFrame implements ActionListener {
+public class Fenetre extends JFrame implements ActionListener,KeyListener {
 
     //variables
 
@@ -71,6 +71,7 @@ public class Fenetre extends JFrame implements ActionListener {
         //ajout des listeners
         newPlanet.addActionListener(this);
         timerButton.addActionListener(this);
+        addKeyListener(this);
 
         //affichage de la fenetre et arret a la fermeture
         this.setVisible(true);
@@ -80,6 +81,13 @@ public class Fenetre extends JFrame implements ActionListener {
         t = new Timer(dt, this);
         t.start();
     }
+    public void changeAnimationState() {
+        if (timerButton.getText() == "Start animation") {
+            timerButton.setText("Stop animation");
+        } else {
+            timerButton.setText("Start animation");
+        }
+    }
 
 
     @Override
@@ -87,14 +95,11 @@ public class Fenetre extends JFrame implements ActionListener {
         //reaction aux clics sur les boutons
         if (e.getSource() == newPlanet) {
             space.NewPlanet();
+            space.TimerButton(true);
         } else if (e.getSource() == timerButton){
+            changeAnimationState();
             space.TimerButton();
             space.cancelPLanet();
-            if (timerButton.getText() == "Start animation") {
-                timerButton.setText("Stop animation");
-            } else {
-                timerButton.setText("Start animation");
-            }
         } else if (e.getSource()==t) {
             timeCountJours.setText("Jours : " + space.getTempsJours());
             timeCountYears.setText("Années : " + space.getTempsAnnées());
@@ -104,5 +109,31 @@ public class Fenetre extends JFrame implements ActionListener {
             mainPanel.add(hud);
 
         }
+    }
+
+    public void keyPressed(KeyEvent e) { 
+        int code = e.getKeyCode();
+        System.out.print("Code clavier "+code+" appuye. ");
+        if (code == KeyEvent.VK_SPACE) {
+            System.out.print("C’est la barre d’espace. ");
+        } else if (code == KeyEvent.VK_DOWN) {
+            System.out.print("C’est la fleche du bas. ");
+        } else {
+        System.out.print("Ce n’est ni espace, ni bas. ");
+        }
+        System.out.println("keyTyped : " + e.getKeyCode());
+    }
+    public void keyReleased(KeyEvent e) {
+
+    }
+       // méthode exécutée à chaque fois qu’une touche unicode est utilisée (donc pas CTRL, SHIFT ou ALT par exemple)
+    public void keyTyped(KeyEvent e) { 
+        System.out.println("keyTyped");
+        /*if (changeName) {
+            System.out.println(e.getKeyChar());
+            newName+=e.getKeyChar();
+            objectName=newName;
+            repaint();
+        }*/
     }
 }

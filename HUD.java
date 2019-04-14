@@ -13,15 +13,16 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 
-public class HUD extends JPanel implements ActionListener, KeyListener {
+public class HUD extends JPanel implements MouseListener,MouseMotionListener, KeyListener {
 
     String objectName;
     String typeObj;
-    private JButton changeName;
-    private JPanel mainPanel;
     private JTextField TF;
     boolean changerName = false;
     String newName;
+    private Image changeName;
+    private boolean mouseOnButton = false;
+    private int mouseX,mouseY;
 
 
     //variables Louise
@@ -53,11 +54,6 @@ public class HUD extends JPanel implements ActionListener, KeyListener {
     }
 
     public HUD(int x, int y, int ax, int ay, String name) {
-        mainPanel=new JPanel();
-        mainPanel.setBounds(20, 20, w - 40, h - 40);
-        mainPanel.setVisible(true);
-        //ImageIcon iconName = ImageIcon.createImageIcon("iconChange.jpg");
-
         String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                 "t", "u", "v", "w", "x", "y", "z" };
 
@@ -69,17 +65,18 @@ public class HUD extends JPanel implements ActionListener, KeyListener {
         this.setBackground(Color.black);
         typeObj=name;
 
-        /*changeName= new JButton(iconName);
-        changeName.setBounds(150,100,180,130);
-        changeName.setLayout(null);
-        changeName.addActionListener(this);*/
-        //mainPanel.add(changeName);
-
-        //mainPanel.addKeyListener(this);
-        //this.setContentPane(mainPanel);
-        
-        //TF=new JTextField(objectName);
-        //TF.setBounds
+        try {
+            File pathToChangeName = new File("iconName.png"); 
+            //transformation en objet image des fichier    
+            changeName = ImageIO.read(pathToChangeName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        changeName=changeName.getScaledInstance(18,18,Image.SCALE_SMOOTH);
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
+        addKeyListener(this);
+        this.addKeyListener(this);
 
        /* temp = new JLabel();
         temp.setBounds(20, 140, 200, 25);
@@ -139,38 +136,52 @@ public class HUD extends JPanel implements ActionListener, KeyListener {
         // repaint();
 
     }
-    public void actionPerformed(ActionEvent e) {
+    public void buttonPerformed() {
         objectName=newName;
         changerName=!changerName;
         newName="";
         repaint();
     }
     public void keyPressed(KeyEvent e) { 
-
-     }
-    public void keyReleased(KeyEvent e) {
+        int code = e.getKeyCode();
+        System.out.print("Code clavier "+code+" appuye. ");
+        if (code == KeyEvent.VK_SPACE) {
+            System.out.print("C’est la barre d’espace. ");
+        } else if (code == KeyEvent.VK_DOWN) {
+            System.out.print("C’est la fleche du bas. ");
+        } else {
+        System.out.print("Ce n’est ni espace, ni bas. ");
+        }
+        System.out.println("keyTyped : " + e.getKeyCode());
+}
+        public void keyReleased(KeyEvent e) {
 
      }
        // méthode exécutée à chaque fois qu’une touche unicode est utilisée (donc pas CTRL, SHIFT ou ALT par exemple)
     public void keyTyped(KeyEvent e) { 
-        System.out.println(e.getSource());
-        System.out.println(e.getKeyCode());
-        System.out.println(e.getKeyChar());
-        newName+=e.getKeyChar();
-        objectName=newName;
-        repaint();
+        System.out.println("keyTyped");
+        if (changerName) {
+            System.out.println(e.getKeyChar());
+            newName+=e.getKeyChar();
+            objectName=newName;
+            repaint();
+        }
     }
 
     @Override
     public void paint(Graphics g) {
+        g.drawString("mouseX " + mouseX + " mouseY " + mouseY,mouseX,mouseY);
         g.setColor(Color.white);
-
         // rectangle du contour
         g.drawRect(20, 20, w - 40, h - 40);
         Font F = new Font("F", 1, 20);
         g.setFont(F);
         g.drawString("Nom de " + typeObj + " : ", 40, 100);
         g.drawString(objectName, 40, 130);
+        g.drawImage(changeName,220,112,null);
+        if (mouseOnButton) {
+            g.drawRect(218, 110, 22, 22);
+        }
         if (typeObj.equals("la planète")) {
             g.drawString("Températures :", 40, 280);
             g.drawString("Elements Chimiques :", 40, 440);
@@ -193,5 +204,31 @@ public class HUD extends JPanel implements ActionListener, KeyListener {
             g.drawString("Oxygène", 40,560 );
             g.drawString("Hydrogène", 40,600 );
         }
+    }
+    public void mouseDragged(MouseEvent e) {
+    }
+    public void mouseClicked(MouseEvent e) {
+        if (mouseOnButton) {
+            changerName=!changerName;
+            repaint();
+        }
+    }
+    public void mouseMoved(MouseEvent e) {
+        mouseX=e.getX();
+        mouseY=e.getY();
+        if (mouseX>=220 && mouseX<= 238 && mouseY>=112 && mouseY<=130) {
+            mouseOnButton=true;
+        } else {
+            mouseOnButton=false;
+        }
+        repaint();
+    }
+    public void mousePressed(MouseEvent e) {
+    }
+    public void mouseReleased(MouseEvent e) {
+    }
+    public void mouseEntered(MouseEvent e) {
+    }
+    public void mouseExited(MouseEvent e) {
     }
 }

@@ -222,10 +222,12 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
 
     public void TimerButton() {
-        
-        //changement d'etat de la variable pause
-        
+        //changement d'etat de la variable pause   
         pause = !pause;
+    }
+    public void TimerButton(boolean etat) {
+        //changement d'etat de la variable pause
+        pause = etat;
     }
 
     /**
@@ -461,7 +463,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     public void cancelPLanet() {
         System.out.println("annulation du placement de la planète");
             
-            if (mode != 0 && size!=objets.size){
+            if (mode != 0 && size!=objets.size()){
                 objets.removeLast();
                 mode=0;
             }
