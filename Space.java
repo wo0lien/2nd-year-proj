@@ -291,7 +291,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         //mise en valeur de l'objet celeste sélectionné
         if (objSelected!=null) {
             g.setColor(Color.WHITE);
-            g.drawRect(objSelected.xZ-objSelected.rZoom-5,objSelected.yZ-objSelected.rZoom-5,objSelected.rZoom*2+10,objSelected.rZoom*2+10);
+            g.drawRect((int)objSelected.xZ - objSelected.rZoom - 5, (int)objSelected.yZ - objSelected.rZoom - 5, objSelected.rZoom * 2 + 10, objSelected.rZoom * 2 + 10);
         }
 
         // prise en compte du mode
@@ -634,8 +634,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 
             //animation de l'explosion
 
-            explosionX = obj.GetX();
-            explosionY = obj.GetY();
+            explosionX = (int)obj.GetX();
+            explosionY = (int)obj.GetY();
             explosionCounter = 0;
 
             explosionR = obj.r;

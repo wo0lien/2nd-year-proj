@@ -16,7 +16,8 @@ import javax.swing.Timer;
  */
 public class Fenetre extends JFrame implements ActionListener {
 
-    //variables
+    private static final long serialVersionUID = 1L;
+	//variables
 	private JPanel mainPanel, footerPanel, hud;
     private JButton newPlanet, timerButton, exitButton;
     private JTextArea timeCountJours, timeCountYears;

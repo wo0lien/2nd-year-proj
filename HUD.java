@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 public class HUD extends JPanel implements ActionListener, KeyListener {
 
-    private static final int NB_MOYENNE = 1000;
+	private static final int NB_MOYENNE = 1000;
 
     String objectName;
     String typeObj;

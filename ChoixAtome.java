@@ -6,9 +6,8 @@ import javax.swing.*;
 
 public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
 
-    //constantes
-
-    private static final int h = 450;
+	//constantes
+	private static final int h = 450;
     private static final int w = 300;
     
     private JPanel pan;
@@ -76,46 +75,40 @@ public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
         fen.setVisible(true);
     }
     
-        @Override
-        public void actionPerformed (ActionEvent e) {
-            //reaction aux clics sur les boutons
-            if (e.getSource()== Oxygene) {
-                atome [0] = true;
-                fen.dispose();
-            }
-            else if (e.getSource() == Azote) {
-                atome [1] = true;
-                fen.dispose();
-            }
-            else if (e.getSource()== Carbone) {
-                atome [2] = true;
-                fen.dispose();
-            }
-            else if (e.getSource() == Hydrogene){
-                atome [3] = true;
-                fen.dispose();
-            }
-        }  
+    @Override
+    public void actionPerformed (ActionEvent e) {
+        //reaction aux clics sur les boutons
+        if (e.getSource()== Oxygene) {
+            atome [0] = true;
+            fen.dispose();
+        }
+        else if (e.getSource() == Azote) {
+            atome [1] = true;
+            fen.dispose();
+        }
+        else if (e.getSource()== Carbone) {
+            atome [2] = true;
+            fen.dispose();
+        }
+        else if (e.getSource() == Hydrogene){
+            atome [3] = true;
+            fen.dispose();
+        }
+    }  
     
-    
-
     public boolean[] getAtome () {
         return atome;
     }
-
     @Override
     public void keyPressed(KeyEvent e) {
         
     }
-
     @Override
     public void keyReleased(KeyEvent e) {
         
     }
-     
-
-     @Override
-     public void keyTyped(KeyEvent e) {
+    @Override
+    public void keyTyped(KeyEvent e) {
          
-     }
+    }
 }
