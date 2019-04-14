@@ -601,10 +601,19 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     objet.vy += Force * Math.sin(angle);
 
                     //préparation de la collision
-                    
+                    //si la distance entre les astres est trop petite
+
                     if (Math.sqrt(r) < objet.r + obj.r){
                         
-                        if (obj.masse < objet.masse || objet.getType() == "sun") {
+                        //le soleil ne peut pas exploser alors on vérifie qu'il n'explose jamais
+
+                        if (obj.masse < objet.masse && obj.getType() != "sun") {
+                            
+                            objetsDestructeurs.add(objet);
+                            objetsDetruits.add(obj);
+                        }
+
+                        if (objet.getType() == "sun") {
                             
                             objetsDestructeurs.add(objet);
                             objetsDetruits.add(obj);
@@ -617,15 +626,23 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         //on s'occupe des destructions
 
+        System.out.println(objetsDestructeurs.size());
+
         while(objetsDestructeurs.size() > 0) {
+
+            System.out.println("=/=");
 
             ObjetCeleste objet = objetsDestructeurs.getLast();
             ObjetCeleste obj = objetsDetruits.getLast();
 
             if (objet.getType() != "sun") {
-                objet.r += obj.r * 0.3; //on augmente la taille
+                System.out.println(objet.r);
+                objet.r = (int)(Math.pow(obj.r * obj.r * obj.r + objet.r * objet.r * objet.r, 1.0 / 3)); //on augmente la taille, la nouvelle planete a double de volume
+                System.out.println(Math.pow(obj.r * obj.r * obj.r + objet.r * objet.r * objet.r, 1.0 / 3));
+                System.out.println(objet.r);
+                
                 objet.masse += obj.masse;
-                for (int x=0; x<objet.atome.length; x++){
+                for (int x = 0; x < objet.atome.length; x++){
                     if (objet.atome[x]== false && obj.atome[x] == true){
                         objet.atome[x] = true;
                     }
@@ -655,6 +672,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
             //on supprime l'objet 
             listeObj.remove(obj);
+            objet.zoomUpdate(zoomFactor, xOffset, yOffset);
             objet.resize();
 
             objetsDetruits.remove(obj);
