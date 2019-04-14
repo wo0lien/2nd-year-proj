@@ -10,18 +10,18 @@ public abstract class ObjetCeleste {
     //
     public double masse, vx, vy;
     public int r;
-    protected int x, y;
+    protected double x, y;
     protected Image disp;
     protected Image imageObjet;
-    protected double temp;
     protected HUD hud;
     protected double zoomCoeff;
     protected int rZoom;
-    protected int xZ,yZ;
+    protected double xZ,yZ;
     public boolean atome[] = new boolean [4];
 
 
-    public ObjetCeleste(double m, double vitx, double vity, int ax, int ay, Image i, int rayon, HUD hud, boolean [] a) {
+    public ObjetCeleste(double m, double vitx, double vity, double ax, double ay, Image i, int rayon, HUD hud, boolean [] a) {
+        
         masse = m;
         x = ax;
         y = ay;
@@ -32,13 +32,11 @@ public abstract class ObjetCeleste {
         vy = vity;
         r = rayon;
         zoomCoeff=1;
-        temp = 0;
         rZoom=r;
         this.hud=hud;
         for (int j =0 ; j<a.length ; j++ ) {
             atome[j] = a[j];
         }
-
 
         //bug : la linked list n'est pas dans le constructeur on ne peut pas y avoir acces depuis ici il faut faire en sort de créer la methode update dans space.java
         //pour avoir acces a tous les objets, voir aussi au niveau du foreach plus simple et propre pour parcourir une linked list
@@ -75,28 +73,32 @@ public abstract class ObjetCeleste {
 
     //accesseurs
 
-    public int GetX() {
+    public double getX() {
         return this.x;
     }
 
-    public int GetY() {
+    public double getY() {
         return this.y;
     }
 
-    public double GetMasse(){
+    public double getMasse(){
         return this.masse;
     }
 
-    public double GetVx() {
+    public double getVx() {
         return vx;
     }
 
-    public double GetVy() {
+    public double getVy() {
         return vy;
     }
 
-    public int GetR() {
+    public int getR() {
         return r;
+    }
+
+    public double getTemp() {
+        return hud.getTemp();
     }
 
     public HUD getHUD() {
@@ -117,5 +119,13 @@ public abstract class ObjetCeleste {
 
     public String getType() {
         return "";
+    }
+
+    public void initializeTemp(double t){
+        hud.initializeTemp(t);
+    }
+
+    public void setTemp(double t) {
+        hud.setTemp(t);
     }
 }

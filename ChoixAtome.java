@@ -6,46 +6,62 @@ import javax.swing.*;
 
 public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
 
+	//constantes
+	private static final int h = 450;
+    private static final int w = 300;
+    
     private JPanel pan;
     private JButton Azote, Carbone, Hydrogene, Oxygene;
     private JLabel Choix;
     boolean atome[] = new boolean [4];
     private JFrame fen;
 
-    public ChoixAtome (String ChoixComposition, Space s){
-        super("ChoixComposition");
-        
+    private Dimension screenSize;
 
-       
+    public ChoixAtome (String ChoixComposition, Space s, int ax, int ay){
+        super(ChoixComposition);
+
+        screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        //on fait attention a ne pas sortir de l'écran
+
+        if ((int)screenSize.getWidth() <= w + ax) {
+            ax = (int)screenSize.getWidth() - w;
+        }
+
+        if ((int)screenSize.getHeight() <= h + ay) {
+            ay = (int)screenSize.getHeight() - h;
+        }
 
         //Jpanel principal (content pane)
         fen = new JFrame ();
        // fen.setLocationRelativeTo(null);
-        fen.setSize(1400, 850);
+        fen.setBounds(ax, ay, w, h);
         pan = new JPanel();
-        pan.setSize(1400, 850);
+        pan.setSize(w, h);
         pan.setLayout(null);
         pan.setBackground(Color.gray);
 
+        //utilisation du html pour centrer et mettre à la ligne
+
+        Choix = new JLabel ("<html><div style=\"text-align: center;\">Choisis de quoi ta planète sera <br> constituée !</div></html>");
+        Choix.setBounds(25, 25, 250, 50);
+
         Azote = new JButton("Azote");
-        Azote.setBounds(75, 395, 200, 60);
+        Azote.setBounds(50, 100, 200, 50);
         Azote.addActionListener(this);
 
-
         Carbone = new JButton("Carbone");
-        Carbone.setBounds(350, 395, 200, 60);
+        Carbone.setBounds(50, 175, 200, 50);
         Carbone.addActionListener(this);
 
         Hydrogene = new JButton("Hydrogene");
-        Hydrogene.setBounds(700, 395, 200, 60);
+        Hydrogene.setBounds(50, 250, 200, 50);
         Hydrogene.addActionListener(this);
 
         Oxygene = new JButton("Oxygene");
-        Oxygene.setBounds(1050, 395, 200, 60);
+        Oxygene.setBounds(50, 325, 200, 50);
         Oxygene.addActionListener(this);
-
-        Choix = new JLabel ("Choisis de quoi ta planète sera constituée !");
-        Choix.setBounds(600, 600, 200, 50);
 
         pan.add(Oxygene);
         pan.add(Azote);
@@ -59,46 +75,40 @@ public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
         fen.setVisible(true);
     }
     
-        @Override
-        public void actionPerformed (ActionEvent e) {
-            //reaction aux clics sur les boutons
-            if (e.getSource()== Oxygene) {
-                atome [0] = true;
-                fen.dispose();
-            }
-            else if (e.getSource() == Azote) {
-                atome [1] = true;
-                fen.dispose();
-            }
-            else if (e.getSource()== Carbone) {
-                atome [2] = true;
-                fen.dispose();
-            }
-            else if (e.getSource() == Hydrogene){
-                atome [3] = true;
-                fen.dispose();
-            }
-        }  
+    @Override
+    public void actionPerformed (ActionEvent e) {
+        //reaction aux clics sur les boutons
+        if (e.getSource()== Oxygene) {
+            atome [0] = true;
+            fen.dispose();
+        }
+        else if (e.getSource() == Azote) {
+            atome [1] = true;
+            fen.dispose();
+        }
+        else if (e.getSource()== Carbone) {
+            atome [2] = true;
+            fen.dispose();
+        }
+        else if (e.getSource() == Hydrogene){
+            atome [3] = true;
+            fen.dispose();
+        }
+    }  
     
-    
-
     public boolean[] getAtome () {
         return atome;
     }
-
     @Override
     public void keyPressed(KeyEvent e) {
         
     }
-
     @Override
     public void keyReleased(KeyEvent e) {
         
     }
-     
-
-     @Override
-     public void keyTyped(KeyEvent e) {
+    @Override
+    public void keyTyped(KeyEvent e) {
          
-     }
+    }
 }

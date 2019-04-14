@@ -1,19 +1,27 @@
-import java.awt.*;
-import java.awt.event.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseListener;
+import java.util.LinkedList;
 
-import javax.swing.*;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.event.*;
+import java.awt.*;
+import javax.swing.*;
 import java.io.File;
 import javax.imageio.ImageIO;
 
 
 public class HUD extends JPanel implements MouseListener,MouseMotionListener, KeyListener {
+
+	private static final int NB_MOYENNE = 1000;
 
     String objectName;
     String typeObj;
@@ -24,28 +32,10 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
     private boolean mouseOnButton = false;
     private int mouseX,mouseY;
 
-
-    //variables Louise
-
-   /* private JPanel Contour;
-    private JLabel Titre; 
-    private JLabel Dist;
-    private JLabel affDist;
-    private JLabel temp ;
-    private JLabel tempMoy;
-    private JLabel tempMin;
-    private JLabel tempMax;
-    private JLabel  affMoy;
-    private JLabel  affMin;
-    private JLabel  affMax;*/
+    private double temp, moyTemp, minTemp, maxTemp, deltaTemp;
+    private LinkedList<Float> temps;
 
     // taille de la fenetre
-
-    /**
-     *
-     */
-
-    private static final int _200 = 200;
     private int h, w;
 
     public HUD() {
@@ -54,6 +44,16 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
     }
 
     public HUD(int x, int y, int ax, int ay, String name) {
+
+        /*mainPanel=new JPanel();
+        mainPanel.setBounds(20, 20, w - 40, h - 40);
+        mainPanel.setVisible(true);*/
+
+        //initialisation variable temp
+
+        temp = 0;
+        temps = new LinkedList<Float>();
+
         String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                 "t", "u", "v", "w", "x", "y", "z" };
 
@@ -171,6 +171,12 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
     @Override
     public void paint(Graphics g) {
         g.drawString("mouseX " + mouseX + " mouseY " + mouseY,mouseX,mouseY);
+
+        //fond noir
+        g.setColor(Color.black);
+
+        g.fillRect(0, 0, w, h);
+
         g.setColor(Color.white);
         // rectangle du contour
         g.drawRect(20, 20, w - 40, h - 40);
@@ -187,17 +193,17 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
             g.drawString("Elements Chimiques :", 40, 440);
             Font G = new Font("G", 1, 15);
             g.setFont(G);
-            g.drawString("Distance au Soleil : ", 40, _200);
-            g.drawString("val" + " km", 200, _200);
-            g.drawString("moyenne :", 50,320 );
-            g.drawString("min :", 50,360 );
-            g.drawString("max :", 50,400 );
+            g.drawString("Distance au Soleil : ", 40, 200);
+            g.drawString("val" + " km", 200, 200);
+            g.drawString("actuelle :", 50,320 );
+            g.drawString("moyenne :", 50,360 );
+            g.drawString("delta :", 50,400 );
             g.setColor(Color.GREEN);
-            g.drawString("val" + " °C", 200,320 );
+            g.drawString((int)temp + " °C", 200,320 );
             g.setColor(Color.LIGHT_GRAY);
-            g.drawString("val" + " °C", 200,360 );
+            g.drawString((int)moyTemp + " °C", 200,360 );
             g.setColor(Color.RED);
-            g.drawString("val" + " °C", 200,400 );
+            g.drawString((int)deltaTemp + " °C", 200,400 );
             g.setColor(Color.WHITE);
             g.drawString("Azote", 40,480 );
             g.drawString("Carbone", 40,520 );
@@ -230,5 +236,14 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
     public void mouseEntered(MouseEvent e) {
     }
     public void mouseExited(MouseEvent e) {
+    }
+    public void initializeTemp(double a){
+        temp=a;
+    }
+    public void setTemp(double a) {
+        temp=a;
+    }
+    public double getTemp() {
+        return temp;
     }
 }

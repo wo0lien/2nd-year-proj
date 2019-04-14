@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
  */
 public class Planete extends ObjetCeleste{
 
-    public Planete(double m, double vx, double vy, int ax, int ay, Image i, int rayon, HUD hud, boolean[] a) {
+    public Planete(double m, double vx, double vy, double ax, double ay, Image i, int rayon, HUD hud, boolean[] a) {
         super(m, vx, vy, ax, ay, i,rayon,hud, new boolean[4]); //on appelle le constructeur de la class parente ObjCelestes
         
         try {
@@ -26,7 +26,7 @@ public class Planete extends ObjetCeleste{
         //affichage de trajectoire
 
         g.setColor(Color.RED);
-        g.drawImage(disp, this.xZ - disp.getWidth(null) / 2, this.yZ - disp.getHeight(null) / 2, null);
+        g.drawImage(disp, (int)this.xZ - disp.getWidth(null) / 2, (int)this.yZ - disp.getHeight(null) / 2, null);
         //enlever les commentaires pour débugger : affiche les coordonnées réelles et les coordonnées affichées
         //g.drawString("x " + x + " y " + y,xZ,yZ);
         //g.drawString("xZ " + xZ + " yZ " + yZ,xZ,yZ+15);
@@ -53,7 +53,6 @@ public class Planete extends ObjetCeleste{
     public void resize(){
         disp = imageObjet.getScaledInstance(2*rZoom,2*rZoom, Image.SCALE_SMOOTH);
     }
-
 
     public String getType() {
         return "planet";
