@@ -17,15 +17,13 @@ import javax.swing.Timer;
 public class Fenetre extends JFrame implements ActionListener {
 
     //variables
-
-    private static final int _400 = 400;
 	private JPanel mainPanel, footerPanel, hud;
     private JButton newPlanet, timerButton, exitButton;
     private JTextArea timeCountJours, timeCountYears;
     private Space space;
 
     //variable dimension pour récupérer la taille de l'écran en mode fullscreen
-    Dimension screenSize;
+    private Dimension screenSize;
 
     //timer
     Timer t;
@@ -65,6 +63,8 @@ public class Fenetre extends JFrame implements ActionListener {
         footerPanel.setBounds(0, (int)screenSize.getHeight() - 150, (int)screenSize.getWidth(), 150);
         
         footerPanel.setBackground(Color.WHITE);
+
+        //ajout des boutons dans la barre du bas
 
         newPlanet = new JButton("Nouvelle planete");
         newPlanet.setBounds(20, 20, 200, 60);

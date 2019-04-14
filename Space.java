@@ -411,13 +411,13 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     break;
                 case 1:
                     // Choix Atome
-            
-                    ChoixAtome choix = new ChoixAtome("choisis ta compo", this);
+                
+                    //creation de la fenetre de choix des atomes
+                    ChoixAtome choix = new ChoixAtome("choisis ta composition", this, mouseX, mouseY);
+                    
+                    //on récupère la réponse de l'utilisateur
                     atome = choix.getAtome();
                 
-                    
-
-
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
                     newPlanetY = (int)mouseYReel;
