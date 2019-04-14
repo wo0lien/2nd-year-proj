@@ -45,6 +45,7 @@ public class HUD extends JPanel implements ActionListener, KeyListener {
      */
 
     private static final int _200 = 200;
+    
     private int h, w;
 
     public HUD() {
@@ -163,6 +164,12 @@ public class HUD extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void paint(Graphics g) {
+
+        //fond noir
+        g.setColor(Color.black);
+
+        g.fillRect(0, 0, w, h);
+
         g.setColor(Color.white);
 
         // rectangle du contour
