@@ -3,8 +3,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -17,10 +15,6 @@ import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import javax.swing.Timer;
-
-
-import java.net.URL;
 
 /**
  * Space
@@ -30,6 +24,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     //constants
 
     private static final int sunDiam = 100;
+    private static final double coefTemp = 100;
 
     // timer
     private int tempsJours = 0, tempsAnnées = 0, dt = 40;
@@ -92,7 +87,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private int size;
 
     private Soleil sun;
-    private double coefTemp;
 
     // ChoixAtome
     private boolean atome[] = new boolean[4];
@@ -183,7 +177,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
         sun = new Soleil(100000, (int)dim.getWidth() / 2, (int)dim.getHeight() / 2, resizedSun, sunDiam / 2, h);
         objets.add(sun);
 
-        coefTemp = 100;
         size = objets.size();
 
         repaint();
@@ -212,15 +205,23 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 // distance au soleil
                 //on verifie que ce ne soit pas le soleil lui-meme
                 if (obj.getType() != "sun") {
-
-                    double dist = Math.sqrt(Math.abs((double) (sun.GetX() - obj.GetX())) * Math.abs((double) (sun.GetX() - obj.GetX())) + Math.abs((double) (sun.GetY() - obj.GetY())) * Math.abs((double) (sun.GetY() - obj.GetY())));
-                    
-                    obj.SetTemp(sun.GetTemp() / dist * coefTemp);
-                    
+                    SetTemp(obj);
                 }
             }
         }
         repaint();
+    }
+
+    private void SetTemp(ObjetCeleste obj) {
+        double dist = SunDistance(obj);
+        obj.SetTemp(sun.GetTemp() / dist * coefTemp);
+    }
+
+    private double SunDistance(ObjetCeleste obj) {
+        double dist = Math
+                .sqrt(Math.abs((double) (sun.GetX() - obj.GetX())) * Math.abs((double) (sun.GetX() - obj.GetX()))
+                        + Math.abs((double) (sun.GetY() - obj.GetY())) * Math.abs((double) (sun.GetY() - obj.GetY())));
+        return dist;
     }
 
     /**
@@ -397,7 +398,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             size=objets.size();
             switch (mode) {
                 case 0:
-                    //chose qui se passe quand le jeu est en mode normal
+                    
+                    //quand le jeu est en mode normal
                     // clicker sur une planete pour afficher son hud
                     for (ObjetCeleste obj : objets) {
                         double dx = obj.GetX() - (int)mouseXReel;
@@ -433,23 +435,25 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                     //remplacer le 2 par un coef en fonction des materiaux
                     
                     HUD hud= new HUD(bx,by,ax,ay,"la planète"); 
-                    if (atome [0] == true){
-                        masse =6000;
+                    if (atome[0] == true){
+                        masse = 6000;
                     }
-                    if (atome [1] == true){
-                        masse =3000;
+                    if (atome[1] == true){
+                        masse = 3000;
                     }
-                    if (atome [2] == true){
-                        masse =2000;
+                    if (atome[2] == true){
+                        masse = 2000;
                     }
-                    if (atome [3] == true){
-                        masse =400;
+                    if (atome[3] == true){
+                        masse = 400;
                     }
 
                     Planete newp = new Planete((double)masse * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atome);
+                    
+                    newp.InitializeTemp((double)(sun.GetTemp() / SunDistance(newp) * coefTemp));
+                    
                     newp.zoomUpdate(zoomFactor,xOffset,yOffset);
                     objets.add(newp);
-
                     copie();
 
                     //repassage en mode 3

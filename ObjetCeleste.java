@@ -13,7 +13,6 @@ public abstract class ObjetCeleste {
     protected int x, y;
     protected Image disp;
     protected Image imageObjet;
-    protected double temp;
     protected HUD hud;
     protected double zoomCoeff;
     protected int rZoom;
@@ -32,7 +31,6 @@ public abstract class ObjetCeleste {
         vy = vity;
         r = rayon;
         zoomCoeff=1;
-        temp = 0;
         rZoom=r;
         this.hud=hud;
         for (int j =0 ; j<a.length ; j++ ) {
@@ -100,7 +98,7 @@ public abstract class ObjetCeleste {
     }
 
     public double GetTemp() {
-        return temp;
+        return hud.GetTemp();
     }
 
     public HUD getHUD() {
@@ -122,7 +120,12 @@ public abstract class ObjetCeleste {
     public String getType() {
         return "";
     }
+
+    public void InitializeTemp(double t){
+        hud.InitializeTemp(t);
+    }
+    
     public void SetTemp(double t) {
-        temp = t;
+        hud.SetTemp(t);
     }
 }
