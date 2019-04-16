@@ -105,10 +105,12 @@ public class Fenetre extends JFrame implements ActionListener{
         this.setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //consutrction du timer
+        //construction du timer
         t = new Timer(dt, this);
         t.start();
     }
+
+    //play/pause l'animation
     public void changeAnimationState() {
         if (timerButton.getText() == "Start animation") {
             timerButton.setText("Stop animation");

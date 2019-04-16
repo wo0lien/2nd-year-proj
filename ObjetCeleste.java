@@ -84,6 +84,8 @@ public abstract class ObjetCeleste {
     public float[] getAtome() {
         return atome;
     }
+
+    // permet de déterminer des coordonnées sur l'écran en fonction du zoom et des coordonnées réelles
     public void zoomUpdate(double zoom,double xOffset, double yOffset) {
         xZ = (int)(-(xOffset-x)*zoom);
         yZ = (int)(-(yOffset-y)*zoom);
@@ -97,6 +99,7 @@ public abstract class ObjetCeleste {
         return "";
     }
 
+    //envoie les informations au HUD sur la température
     public void initializeTemp(double t){
         hud.initializeTemp(t);
     }
@@ -104,6 +107,8 @@ public abstract class ObjetCeleste {
     public void setTemp(double t) {
         hud.setTemp(t);
     }
+
+    //fait le calcul de la masse totale
     public void updateMasse() {
         masse=0;
         for(int i=0;i<atome.length;i++) {

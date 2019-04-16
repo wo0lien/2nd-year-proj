@@ -36,6 +36,7 @@ public class ChoixAtome extends JFrame implements ActionListener {
 
         //Jpanel principal (content pane)
         fen = new JFrame ();
+
        // fen.setLocationRelativeTo(null);
         fen.setBounds(ax, ay, w, h);
         pan = new JPanel();
@@ -64,6 +65,7 @@ public class ChoixAtome extends JFrame implements ActionListener {
         Oxygene.setBounds(50, 325, 200, 50);
         Oxygene.addActionListener(this);
 
+        //add
         pan.add(Oxygene);
         pan.add(Azote);
         pan.add(Carbone);
@@ -71,7 +73,7 @@ public class ChoixAtome extends JFrame implements ActionListener {
         pan.add(Choix);
         fen.add(pan);
 
-       fen.setContentPane(pan);
+        fen.setContentPane(pan);
       
         fen.setVisible(true);
     }
@@ -81,30 +83,23 @@ public class ChoixAtome extends JFrame implements ActionListener {
         //reaction aux clics sur les boutons
         if (e.getSource()== Azote) {
             atome [0] = true;
-            end();
+            fen.dispose();
         }
         else if (e.getSource() == Carbone) {
             atome [1] = true;
-            end();
+            fen.dispose();
         }
         else if (e.getSource()== Oxygene) {
             atome [2] = true;
-            end();
+            fen.dispose();
         }
         else if (e.getSource() == Hydrogene){
             atome [3] = true;
-            end();
+            fen.dispose();
         }
     }  
     
     public boolean[] getAtome () {
         return atome;
-    }
-    public void end() {
-        enCours=false;
-        fen.dispose();
-    }
-    public boolean getEnCours() {
-        return enCours;
     }
 }
