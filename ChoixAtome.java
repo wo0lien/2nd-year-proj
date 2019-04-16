@@ -4,7 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
+public class ChoixAtome extends JFrame implements ActionListener {
 
 	//constantes
 	private static final int h = 450;
@@ -99,18 +99,6 @@ public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
     
     public boolean[] getAtome () {
         return atome;
-    }
-    @Override
-    public void keyPressed(KeyEvent e) {
-        
-    }
-    @Override
-    public void keyReleased(KeyEvent e) {
-        
-    }
-    @Override
-    public void keyTyped(KeyEvent e) {
-         
     }
     public void end() {
         enCours=false;
