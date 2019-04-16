@@ -15,6 +15,7 @@ public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
     private JLabel Choix;
     boolean atome[] = new boolean [4];
     private JFrame fen;
+    private boolean enCours=true;
 
     private Dimension screenSize;
 
@@ -78,21 +79,21 @@ public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
     @Override
     public void actionPerformed (ActionEvent e) {
         //reaction aux clics sur les boutons
-        if (e.getSource()== Oxygene) {
+        if (e.getSource()== Azote) {
             atome [0] = true;
-            fen.dispose();
+            end();
         }
-        else if (e.getSource() == Azote) {
+        else if (e.getSource() == Carbone) {
             atome [1] = true;
-            fen.dispose();
+            end();
         }
-        else if (e.getSource()== Carbone) {
+        else if (e.getSource()== Oxygene) {
             atome [2] = true;
-            fen.dispose();
+            end();
         }
         else if (e.getSource() == Hydrogene){
             atome [3] = true;
-            fen.dispose();
+            end();
         }
     }  
     
@@ -110,5 +111,12 @@ public class ChoixAtome extends JFrame implements ActionListener, KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
          
+    }
+    public void end() {
+        enCours=false;
+        fen.dispose();
+    }
+    public boolean getEnCours() {
+        return enCours;
     }
 }

@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 public class Soleil extends ObjetCeleste {
 
     public Soleil(double m, double ax, double ay, Image i, int rayon, HUD hud) {
-        super(m, 0, 0, ax, ay, i, rayon, hud, new boolean[4]); //un soleil est une étoile fixe avec vitesse = 0
+        super(m, 0, 0, ax, ay, i, rayon, hud, new float[4]); //un soleil est une étoile fixe avec vitesse = 0
         
         hud.initializeTemp(1000);
 

@@ -1,6 +1,5 @@
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.LinkedList;
 
 /**
  * ObjetCeleste Premiere instance abstract du composant de base objet celeste
@@ -17,12 +16,12 @@ public abstract class ObjetCeleste {
     protected double zoomCoeff;
     protected int rZoom;
     protected double xZ,yZ;
-    public boolean atome[] = new boolean [4];
+    protected double volume;
+    public float atome[] = new float [4];
 
 
-    public ObjetCeleste(double m, double vitx, double vity, double ax, double ay, Image i, int rayon, HUD hud, boolean [] a) {
-        
-        masse = m;
+    public ObjetCeleste(double m,double vitx, double vity, double ax, double ay, Image i, int rayon, HUD hud, float [] a) {
+        masse=m;
         x = ax;
         y = ay;
         xZ=x;
@@ -33,34 +32,11 @@ public abstract class ObjetCeleste {
         r = rayon;
         zoomCoeff=1;
         rZoom=r;
+        volume=4/3 * Math.PI * Math.pow(r,3);
         this.hud=hud;
         for (int j =0 ; j<a.length ; j++ ) {
             atome[j] = a[j];
         }
-
-        //bug : la linked list n'est pas dans le constructeur on ne peut pas y avoir acces depuis ici il faut faire en sort de créer la methode update dans space.java
-        //pour avoir acces a tous les objets, voir aussi au niveau du foreach plus simple et propre pour parcourir une linked list
-        /*
-        for (int j = 0; j < objets.size(); j++) {
-            // int Distx;
-            // int Disty;
-            double r;
-            double Force;
-            double angle;
-            double dirx;
-            double diry;
-            dx = objets.get(j).x - x;
-            dy = objets.get(j).y - y;
-            r = dx * dx + dy * dy;
-            if (r != 0) {
-                Force = objets.get(j).masse / r;
-                angle = Math.atan2(dy, dx);
-                dirx = Force * Math.cos(angle);
-                diry = Force * Math.sin(angle);
-                vx += dirx;
-                vy += diry;
-            }
-        } */
     }
 
     // déclatation des méthodes abstract
@@ -105,7 +81,7 @@ public abstract class ObjetCeleste {
         return hud;
     }
 
-    public boolean[] getatome() {
+    public float[] getAtome() {
         return atome;
     }
     public void zoomUpdate(double zoom,double xOffset, double yOffset) {
@@ -127,5 +103,12 @@ public abstract class ObjetCeleste {
 
     public void setTemp(double t) {
         hud.setTemp(t);
+    }
+    public void updateMasse() {
+        masse=0;
+        for(int i=0;i<atome.length;i++) {
+            masse+=atome[i];
+        }
+        hud.setMasse((float)(masse));
     }
 }

@@ -64,6 +64,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
     private int mouseX = 0, mouseY = 0;
     private int newPlanetX = 0, newPlanetY = 0, newPlanetRadius = 20;
     private int newPlanetXReel = 0, newPlanetYReel = 0;
+    private int volume;
+    private boolean choixEnCours=false;
 
     // Image pour l'affichage sans scintillements
     private BufferedImage monBuf; // buffer d’affichage
@@ -206,6 +208,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 //on verifie que ce ne soit pas le soleil lui-meme
                 if (obj.getType() != "sun") {
                     SetTemp(obj);
+                    obj.getHUD().updateTemp();
+                    obj.getHUD().setDistance(SunDistance(obj));
                 }
             }
         }
@@ -383,7 +387,6 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
             case 2:
                 //mode fixage de la taille de la planete
                 newPlanetRadius = Math.max((int)Math.sqrt(Math.pow((int)mouseXReel - newPlanetX, 2) + Math.pow((int)mouseYReel - newPlanetY, 2)), 1);
-
                 //mise a l'echelle de la planete
                 resizedPlanet = planetImage.getScaledInstance((int)(newPlanetRadius * 2 * zoomFactor), (int)(newPlanetRadius * 2 * zoomFactor), Image.SCALE_SMOOTH);
 
@@ -412,6 +415,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         if (r < obj.r) {
                             hudCourant=obj.getHUD();
                             objSelected=obj;
+                            for (ObjetCeleste objets : objets) {
+                                objets.getHUD().setSelected(false);
+                            }
+                            objSelected.getHUD().setSelected(true);
+                            
                         }
                     }
                     break;
@@ -420,9 +428,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 
                     //creation de la fenetre de choix des atomes
                     ChoixAtome choix = new ChoixAtome("choisis ta composition", this, mouseX, mouseY);
+                    choixEnCours=true;
                     
                     //on récupère la réponse de l'utilisateur
                     atome = choix.getAtome();
+                    choixEnCours=false;
                 
                     //fixage de la position de la nouvelle planete
                     newPlanetX = (int)mouseXReel;
@@ -436,25 +446,36 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
                 case 2:
                     //sauvegarde de la planete dans la liste des objets
-                    //remplacer le 2 par un coef en fonction des materiaux
-                    
                     HUD hud= new HUD(bx,by,ax,ay,"la planète"); 
+
+                    float [] atomesMasses = new float [4];
+                    volume = (int)(4/3 * Math.PI * Math.pow(newPlanetRadius,3));
+                    masse=0;
                     if (atome[0] == true){
-                        masse = 6000;
+                        atomesMasses[0] = 6 * volume;
+                        System.out.println("masse 1 " + atomesMasses[0]);
                     }
                     if (atome[1] == true){
-                        masse = 3000;
+                        atomesMasses[1] = 3 * volume;
+                        System.out.println("masse 2 " + atomesMasses[1]);
                     }
                     if (atome[2] == true){
-                        masse = 2000;
+                        atomesMasses[2] = 2 * volume;
+                        System.out.println("masse 3 " + atomesMasses[2]);
                     }
                     if (atome[3] == true){
-                        masse = 400;
+                        atomesMasses[3] = (float)(0.4 * volume);
+                        System.out.println("masse 4 " + atomesMasses[3]);
+                    }
+                    for (int i=0;i<atomesMasses.length;i++) {
+                        masse+=atomesMasses[i];
                     }
 
-                    Planete newp = new Planete((double)masse * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atome);
-                    
+                    Planete newp = new Planete((double)masse * newPlanetRadius, 0, 0, newPlanetX, newPlanetY, resizedPlanet, newPlanetRadius,hud, atomesMasses);
+                    newp.updateMasse();
+                    newp.getHUD().setAtome(atomesMasses);
                     newp.initializeTemp((double)(sun.getTemp() / SunDistance(newp) * coefTemp));
+                    newp.getHUD().setDistance(SunDistance(newp));
                     
                     newp.zoomUpdate(zoomFactor,xOffset,yOffset);
                     objets.add(newp);
@@ -612,13 +633,11 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                         //le soleil ne peut pas exploser alors on vérifie qu'il n'explose jamais
 
                         if (obj.masse < objet.masse && obj.getType() != "sun") {
-                            
                             objetsDestructeurs.add(objet);
                             objetsDetruits.add(obj);
                         }
 
                         if (objet.getType() == "sun") {
-                            
                             objetsDestructeurs.add(objet);
                             objetsDetruits.add(obj);
                         }
@@ -630,27 +649,22 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
         //on s'occupe des destructions
 
-        System.out.println(objetsDestructeurs.size());
-
         while(objetsDestructeurs.size() > 0) {
-
-            System.out.println("=/=");
-
             ObjetCeleste objet = objetsDestructeurs.getLast();
             ObjetCeleste obj = objetsDetruits.getLast();
 
             if (objet.getType() != "sun") {
-                System.out.println(objet.r);
                 objet.r = (int)(Math.pow(obj.r * obj.r * obj.r + objet.r * objet.r * objet.r, 1.0 / 3)); //on augmente la taille, la nouvelle planete a double de volume
                 System.out.println(Math.pow(obj.r * obj.r * obj.r + objet.r * objet.r * objet.r, 1.0 / 3));
                 System.out.println(objet.r);
                 
                 objet.masse += obj.masse;
                 for (int x = 0; x < objet.atome.length; x++){
-                    if (objet.atome[x]== false && obj.atome[x] == true){
-                        objet.atome[x] = true;
-                    }
+                    objet.atome[x] += obj.atome[x];
                 }
+                objet.updateMasse();
+                objet.getHUD().setAtome(objet.atome);
+                objet.getHUD().repaint();
             }
                 
             //animation de l'explosion
@@ -672,6 +686,8 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
                 //si l'objet sélectionné était l'un des 2, le nouvel objet est sélectionné 
             if (objSelected==obj) {
                 objSelected=objet;
+                objSelected.getHUD().setSelected(true);
+                objSelected.getHUD().repaint();
             }
 
             //on supprime l'objet 
@@ -697,7 +713,7 @@ public class Space extends JPanel implements  MouseListener, MouseMotionListener
 
             //on clone et on ajoute les éléments
             if (obj.getType() == "planet") {
-                Planete np = new Planete(obj.getMasse(), obj.getVx(), obj.getVy(), obj.getX(), obj.getY(), resizedPlanet,obj.getR(), obj.getHUD(), obj.getatome());
+                Planete np = new Planete(obj.getMasse(), obj.getVx(), obj.getVy(), obj.getX(), obj.getY(), resizedPlanet,obj.getR(), obj.getHUD(), obj.getAtome());
                 objetsTrajectoire.add(np);
             } else {
                 Soleil ns = new Soleil(obj.getMasse(), obj.getX(), obj.getY(), resizedPlanet,obj.getR(), obj.getHUD());

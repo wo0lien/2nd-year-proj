@@ -1,20 +1,14 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
-
-import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.event.*;
 import java.awt.*;
-import javax.swing.*;
 import java.io.File;
 import javax.imageio.ImageIO;
 
@@ -25,15 +19,18 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
 
     String objectName;
     String typeObj;
-    private JTextField TF;
     boolean changerName = false;
     String newName;
     private Image changeName;
     private boolean mouseOnButton = false;
     private int mouseX,mouseY;
+    private boolean selected=false;
+    private float[] atome;
+    private float masse;
+    private double distanceSoleil;
 
-    private double temp, moyTemp, minTemp, maxTemp, deltaTemp;
-    private LinkedList<Float> temps;
+    private double moyTemp, minTemp, maxTemp, deltaTemp;
+    private LinkedList<Double> temps;
 
     // taille de la fenetre
     private int h, w;
@@ -44,15 +41,8 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
     }
 
     public HUD(int x, int y, int ax, int ay, String name) {
-
-        /*mainPanel=new JPanel();
-        mainPanel.setBounds(20, 20, w - 40, h - 40);
-        mainPanel.setVisible(true);*/
-
         //initialisation variable temp
-
-        temp = 0;
-        temps = new LinkedList<Float>();
+        temps = new LinkedList<Double>();
 
         String[] c = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                 "t", "u", "v", "w", "x", "y", "z" };
@@ -64,6 +54,8 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
         this.setBounds(x, y, ax, ay);
         this.setBackground(Color.black);
         typeObj=name;
+
+        atome = new float[4];
 
         try {
             File pathToChangeName = new File("iconName.png"); 
@@ -77,58 +69,6 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
         this.addMouseMotionListener(this);
         addKeyListener(this);
         this.addKeyListener(this);
-
-       /* temp = new JLabel();
-        temp.setBounds(20, 140, 200, 25);
-        temp.setLayout(null);
-        this.add(temp);
-        temp.setText("Températures : ");
-
-        Dist = new JLabel("Distance au Soleil : ");
-        Dist.setBounds(20, 100, 200, 25);
-        Dist.setLayout(null);
-        this.add(Dist);
-
-        affDist = new JLabel("val d" + " km");
-        affDist.setBounds(20, 20, 20, 50);
-        affDist.setLayout(null);
-        affDist.setBorder(BorderFactory.createLineBorder(Color.magenta, 2));
-        this.add(affDist);
-
-        tempMoy = new JLabel("moyenne :");
-        tempMoy.setBounds(20, 170, 100, 50);
-        tempMoy.setLayout(null);
-        this.add(tempMoy);
-
-        affMoy = new JLabel("val" + " °C", SwingConstants.CENTER);
-        affMoy.setBounds(20, 210, 75, 25);
-        affMoy.setLayout(null);
-        affMoy.setBorder(BorderFactory.createLineBorder(Color.black, 2));
-        this.add(affMoy);
-
-        tempMin = new JLabel("minimale :", SwingConstants.CENTER);
-        tempMin.setBounds(w / 2 - 50, 170, 75, 50);
-        tempMin.setLayout(null);
-        this.add(tempMin);
-
-        affMin = new JLabel("val" + " °C", SwingConstants.CENTER);
-        affMin.setBounds(w / 2 - 50, 210, 75, 25);
-        affMin.setLayout(null);
-        affMin.setBorder(BorderFactory.createLineBorder(Color.blue, 2));
-        this.add(affMin);
-
-        tempMax = new JLabel("maximale :");
-        tempMax.setBounds(w - 100, 170, 100, 50);
-        tempMax.setLayout(null);
-        this.add(tempMax);
-
-        affMax = new JLabel("val" + " °C", SwingConstants.CENTER);
-        affMax.setBounds(w - 100, 210, 75, 25);
-        affMax.setLayout(null);
-        affMax.setBorder(BorderFactory.createLineBorder(Color.orange, 2));
-        this.add(affMax); */
-
-        // this.setLayout(null);
 
         h = this.getHeight();
         w = this.getWidth();
@@ -170,45 +110,44 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
 
     @Override
     public void paint(Graphics g) {
-        g.drawString("mouseX " + mouseX + " mouseY " + mouseY,mouseX,mouseY);
+        if (selected) {
+            //fond noir
+            g.setColor(Color.black);
+            g.fillRect(0, 0, w, h);
 
-        //fond noir
-        g.setColor(Color.black);
-
-        g.fillRect(0, 0, w, h);
-
-        g.setColor(Color.white);
-        // rectangle du contour
-        g.drawRect(20, 20, w - 40, h - 40);
-        Font F = new Font("F", 1, 20);
-        g.setFont(F);
-        g.drawString("Nom de " + typeObj + " : ", 40, 100);
-        g.drawString(objectName, 40, 130);
-        g.drawImage(changeName,220,112,null);
-        if (mouseOnButton) {
-            g.drawRect(218, 110, 22, 22);
-        }
-        if (typeObj.equals("la planète")) {
-            g.drawString("Températures :", 40, 280);
-            g.drawString("Elements Chimiques :", 40, 440);
-            Font G = new Font("G", 1, 15);
-            g.setFont(G);
-            g.drawString("Distance au Soleil : ", 40, 200);
-            g.drawString("val" + " km", 200, 200);
-            g.drawString("actuelle :", 50,320 );
-            g.drawString("moyenne :", 50,360 );
-            g.drawString("delta :", 50,400 );
-            g.setColor(Color.GREEN);
-            g.drawString((int)temp + " °C", 200,320 );
-            g.setColor(Color.LIGHT_GRAY);
-            g.drawString((int)moyTemp + " °C", 200,360 );
-            g.setColor(Color.RED);
-            g.drawString((int)deltaTemp + " °C", 200,400 );
-            g.setColor(Color.WHITE);
-            g.drawString("Azote", 40,480 );
-            g.drawString("Carbone", 40,520 );
-            g.drawString("Oxygène", 40,560 );
-            g.drawString("Hydrogène", 40,600 );
+            // rectangle du contour
+            g.setColor(Color.white);
+            g.drawRect(20, 20, w - 40, h - 40);
+            Font F = new Font("F", 1, 20);
+            g.setFont(F);
+            g.drawString("Nom de " + typeObj + " : ", 40, 100);
+            g.drawString(objectName, 40, 130);
+            g.drawImage(changeName,220,112,null);
+            if (mouseOnButton) {
+                g.drawRect(218, 110, 22, 22);
+            }
+            if (typeObj.equals("la planète")) {
+                g.drawString("Températures :", 40, 280);
+                g.drawString("Elements Chimiques :", 40, 440);
+                Font G = new Font("G", 1, 15);
+                g.setFont(G);
+                g.drawString("Distance au Soleil : ", 40, 200);
+                g.drawString((int)(distanceSoleil) + " x10^6 km", 200, 200);
+                g.drawString("actuelle :", 50,320 );
+                g.drawString("moyenne :", 50,360 );
+                g.drawString("delta :", 50,400 );
+                g.setColor(Color.GREEN);
+                g.drawString((int)getTemp() + " K", 200,320 );
+                g.setColor(Color.LIGHT_GRAY);
+                g.drawString((int)moyTemp + " K", 200,360 );
+                g.setColor(Color.RED);
+                g.drawString((int)deltaTemp + " K", 200,400 );
+                g.setColor(Color.WHITE);
+                g.drawString("Azote         : " + (int)(atome[0]/masse*100) + "%", 40,480 );
+                g.drawString("Carbone     : " + (int)(atome[1]/masse*100) + "%", 40,520 );
+                g.drawString("Oxygène     : " + (int)(atome[2]/masse*100) + "%", 40,560 );
+                g.drawString("Hydrogène : " + (int)(atome[3]/masse*100) + "%", 40,600 );
+            }
         }
     }
     public void mouseDragged(MouseEvent e) {
@@ -222,12 +161,13 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
     public void mouseMoved(MouseEvent e) {
         mouseX=e.getX();
         mouseY=e.getY();
-        if (mouseX>=220 && mouseX<= 238 && mouseY>=112 && mouseY<=130) {
+        if (mouseX>=220 && mouseX<= 238 && mouseY>=112 && mouseY<=130 && selected==true) {
             mouseOnButton=true;
+            repaint();
         } else {
             mouseOnButton=false;
+            //repaint();
         }
-        repaint();
     }
     public void mousePressed(MouseEvent e) {
     }
@@ -238,12 +178,51 @@ public class HUD extends JPanel implements MouseListener,MouseMotionListener, Ke
     public void mouseExited(MouseEvent e) {
     }
     public void initializeTemp(double a){
-        temp=a;
+        temps.add(a);
     }
     public void setTemp(double a) {
-        temp=a;
+        temps.add(a);
     }
     public double getTemp() {
-        return temp;
+        return temps.getLast();
+    }
+    public void setAtome(float[] atomeMasses) {
+        for (int i=0;i<4;i++) {
+            atome[i]=atomeMasses[i];
+        }
+    }
+    public void setSelected(boolean a) {
+        selected=a;
+    }
+    public void setMasse(float a) {
+        masse=a;
+    }
+    public void addTemp(double t) {
+        temps.add(t);
+    }
+    public void updateTemp() {
+        while (temps.size()>1000) {
+            temps.removeFirst();
+        }
+        maxTemp=temps.getFirst();
+        minTemp=temps.getFirst();
+        moyTemp=0;
+        int i=0;
+        for (double t : temps) {
+            if (t>maxTemp) {
+                maxTemp=t;
+            }
+            if (t<minTemp) {
+                minTemp=t;
+            }
+            moyTemp+=t;
+            i++;
+        }
+        moyTemp/=i;
+        deltaTemp=maxTemp-minTemp;
+    }
+    
+    public void setDistance(double d) {
+        distanceSoleil=d;
     }
 }

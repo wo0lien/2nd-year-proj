@@ -91,7 +91,6 @@ public class Fenetre extends JFrame implements ActionListener,KeyListener {
         footerPanel.add(exitButton);
         footerPanel.add(timeCountJours);
         footerPanel.add(timeCountYears);
-
         mainPanel.add(footerPanel);
 
         //side panel
@@ -144,8 +143,8 @@ public class Fenetre extends JFrame implements ActionListener,KeyListener {
             timeCountYears.setText("Années : " + space.getTempsAnnées());
             space.timerPerformed();
             hud=space.getHUD();
-            hud.repaint();
             mainPanel.add(hud);
+            hud.repaint();
         
         } else if (e.getSource() == exitButton) {
             
