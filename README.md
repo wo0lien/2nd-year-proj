@@ -23,4 +23,4 @@ Les images Sun.png, earth.png, space_with_stars.png et explosion.gif sont les im
 
 ### License
 
-Le fichier LICENSE inqique que le projet est sous license MIT (par default sur github).
+Le fichier LICENSE indique que le projet est sous license MIT (par default sur github).
