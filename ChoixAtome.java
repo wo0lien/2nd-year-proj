@@ -15,7 +15,6 @@ public class ChoixAtome extends JFrame implements ActionListener {
     private JLabel Choix;
     boolean atome[] = new boolean [4];
     private JFrame fen;
-    private boolean enCours=true;
 
     private Dimension screenSize;
 
